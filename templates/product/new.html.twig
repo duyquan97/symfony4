@@ -4,8 +4,39 @@
 
 {% block body %}
     <h1>Create new Product</h1>
+    <style>
 
-    {{ include('product/_form.html.twig') }}
+    </style>
+{#    {{ include('product/_form.html.twig') }}#}
+    <div class="container">
+        <form action="{{ path('product_store') }}" >
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-groups">
+                        <label for="">Name:</label>
+                        <input class="form-control" type="text" placeholder="name" name="name">
+                    </div>
+                    <div class="form-groups">
+                        <label for="">Price:</label>
+                        <input class="form-control" type="text" placeholder="price" name="price">
+                    </div>
+                    <div class="form-groups">
+                        <label for="">Category:</label>
+                        <select name="category_id" class="form-control">
+                            {% for item in categories %}
+                            <option value="{{ item.id }}">{{ item.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-groups" style="padding-top: 10px">
+                <button class="btn btn-success" type="submit">CREATE</button>
+            </div>
+
+
+        </form>
+    </div>
 
     <a href="{{ path('product_index') }}">back to list</a>
 {% endblock %}

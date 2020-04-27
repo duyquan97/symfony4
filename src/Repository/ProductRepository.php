@@ -3,7 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Product;
+use App\Entity\Category;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -19,22 +21,39 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
-    // /**
-    //  * @return Product[] Returns an array of Product objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @return Category[] Returns an array of Category objects
+     */
+
+    public function show($id)
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
+         $data =$this->createQueryBuilder('p')
+            ->Where('p.id = :id')
+            ->setParameter('id', $id)
+            ->select('p.id','p.name','p.price', 'c.name as category')
+            ->leftJoin(Category::class, 'c', Join::WITH, 'c.id = p.category_id' )
+            ->setMaxResults(1)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
+         return $data;
+
     }
-    */
+
+    /**
+     * @return Category[] Returns an array of Category objects
+     */
+
+    public function index()
+    {
+        $data =$this->createQueryBuilder('p')
+            ->select('p.id','p.name','p.price', 'c.name as category')
+            ->leftJoin(Category::class, 'c', Join::WITH, 'c.id = p.category_id' )
+            ->getQuery()
+            ->getResult();
+        return $data;
+
+    }
+
 
     /*
     public function findOneBySomeField($value): ?Product

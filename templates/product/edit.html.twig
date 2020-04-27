@@ -5,7 +5,36 @@
 {% block body %}
     <h1>Edit Product</h1>
 
-    {{ include('product/_form.html.twig', {'button_label': 'Update'}) }}
+{#    {{ include('product/_form.html.twig', {'button_label': 'Update'}) }}#}
+    <div class="container">
+        <form action="{{ path('product_update',{id : product.id}) }}" >
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-groups">
+                        <label for="">Name:</label>
+                        <input class="form-control" type="text" placeholder="name" name="name" value="{{ product.name }}">
+                    </div>
+                    <div class="form-groups">
+                        <label for="">Price:</label>
+                        <input class="form-control" type="text" placeholder="price" name="price" value="{{ product.price }}">
+                    </div>
+                    <div class="form-groups">
+                        <label for="">Category:</label>
+                        <select name="category_id" class="form-control">
+                            {% for category in categories %}
+                                <option value="{{ category.id }}" {{ product.categoryId == category.id ? 'selected' : '' }} >{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-groups" style="padding-top: 10px">
+                <button class="btn btn-success" type="submit">UPDATE</button>
+            </div>
+
+
+        </form>
+    </div>
 
     <a href="{{ path('product_index') }}">back to list</a>
 
