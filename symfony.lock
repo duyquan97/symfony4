@@ -90,6 +90,15 @@
     "jdorn/sql-formatter": {
         "version": "v1.2.17"
     },
+    "knplabs/knp-components": {
+        "version": "v2.3.4"
+    },
+    "knplabs/knp-markdown-bundle": {
+        "version": "1.8.1"
+    },
+    "knplabs/knp-paginator-bundle": {
+        "version": "v5.2.0"
+    },
     "laminas/laminas-code": {
         "version": "3.4.1"
     },
@@ -98,6 +107,25 @@
     },
     "laminas/laminas-zendframework-bridge": {
         "version": "1.0.3"
+    },
+    "league/flysystem": {
+        "version": "1.0.67"
+    },
+    "league/flysystem-bundle": {
+        "version": "1.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "1.0",
+            "ref": "8ad3ded1f39fedce098e43259741f42092a1010e"
+        },
+        "files": [
+            "config/packages/flysystem.yaml",
+            "var/storage/.gitignore"
+        ]
+    },
+    "michelf/php-markdown": {
+        "version": "1.9.0"
     },
     "monolog/monolog": {
         "version": "1.25.3"
@@ -355,6 +383,19 @@
     "symfony/stopwatch": {
         "version": "v4.4.7"
     },
+    "symfony/translation": {
+        "version": "3.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.3",
+            "ref": "2ad9d2545bce8ca1a863e50e92141f0b9d87ffcd"
+        },
+        "files": [
+            "config/packages/translation.yaml",
+            "translations/.gitignore"
+        ]
+    },
     "symfony/translation-contracts": {
         "version": "v2.0.1"
     },
@@ -424,6 +465,9 @@
         "version": "v4.4.7"
     },
     "twig/extra-bundle": {
+        "version": "v3.0.3"
+    },
+    "twig/intl-extra": {
         "version": "v3.0.3"
     },
     "twig/twig": {

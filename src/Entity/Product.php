@@ -3,12 +3,15 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ProductRepository")
  */
 class Product
 {
+
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -30,6 +33,16 @@ class Product
      * @ORM\Column(type="integer", nullable=true)
      */
     private $category_id;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $image;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $slug;
 
     public function getId(): ?int
     {
@@ -68,6 +81,30 @@ class Product
     public function setCategoryId(?int $category_id): self
     {
         $this->category_id = $category_id;
+
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): self
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): self
+    {
+        $this->slug = $slug;
 
         return $this;
     }

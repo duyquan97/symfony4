@@ -9,16 +9,16 @@
     </style>
 {#    {{ include('product/_form.html.twig') }}#}
     <div class="container">
-        <form action="{{ path('product_store') }}" >
+        <form action="{{ path('product_store') }}"  enctype="multipart/form-data" method="post">
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-groups">
                         <label for="">Name:</label>
-                        <input class="form-control" type="text" placeholder="name" name="name">
+                        <input class="form-control" type="text" placeholder="name" name="name" required>
                     </div>
                     <div class="form-groups">
                         <label for="">Price:</label>
-                        <input class="form-control" type="text" placeholder="price" name="price">
+                        <input class="form-control" type="number" placeholder="price" name="price" required>
                     </div>
                     <div class="form-groups">
                         <label for="">Category:</label>
@@ -28,15 +28,20 @@
                             {% endfor %}
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label for="">Image</label>
+                        <input type="file" name="image"  class="form-control" style="padding: unset">
+                    </div>
                 </div>
             </div>
             <div class="form-groups" style="padding-top: 10px">
                 <button class="btn btn-success" type="submit">CREATE</button>
+                <a href="{{ path('product_index') }}" class="btn btn-danger">back to list</a>
             </div>
 
 
         </form>
     </div>
 
-    <a href="{{ path('product_index') }}">back to list</a>
+
 {% endblock %}

@@ -3,42 +3,92 @@
 {% block title %}Product index{% endblock %}
 
 {% block body %}
-    <h1>Product index</h1>
-    <div class="row">
-        <div class="col-md-12">
+
+    <div class="container-full" style="margin: 50px">
+        <h1>Product index</h1>
+        <a href="{{ path('product_new')  }}" class="btn btn-success" >Create new <i class="fas fa-plus"></i></a>
+        <div class="row" style="padding-top: 10px">
+            <form action="{{ path('product_index') }}" method="get">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <input type="text" name="name" placeholder="name" class="form-control"  {% if input.name is defined  %} value="{{ input.name }}" {% endif %}>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <select name="category_id" class="form-control" >
+                                    <option value="">Choose product type</option>
+                                    {% for category in categories %}
+                                        <option value="{{ category.id }}" {% if input.name is defined and  input.category_id == category.id %} selected {% endif %} > {{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <input type="text" name="price_min" placeholder="Price from" class="form-control" {% if input.price_min is defined  %} value="{{ input.price_min }}" {% endif %}>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="text" name="price_max" placeholder="Price to" class="form-control " {% if input.price_max is defined  %} value="{{ input.price_max }}" {% endif %}>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <button type="submit" class="form-controll btn btn-success">Search <i class="fas fa-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
 
         </div>
-    </div>
-    <table class="table">
-        <thead>
+        <table class="table">
+            <thead>
             <tr>
                 <th>Id</th>
                 <th>Name</th>
                 <th>Price</th>
                 <th>Category</th>
+                <th>image</th>
                 <th>actions</th>
             </tr>
-        </thead>
-        <tbody>
-        {% for product in products %}
-            <tr>
-                <td>{{ product.id }}</td>
-                <td>{{ product.name }}</td>
-                <td>{{ product.price }}</td>
-                <td>
-                    {{ product.category  }}
-                <td>
-                    <a href="{{ path('product_show', {'id': product.id}) }}">show</a>
-                    <a href="{{ path('product_edit', {'id': product.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="5">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for product in products %}
+                <tr>
+                    <td>{{ product.id }}</td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.price|format_number }} VND</td>
+                    <td>
+                        {{ product.category  }}
+                    </td>
+                    <td>
+                        {% if not product.image is empty %} <img src="{{ asset("uploads/image/#{product.image}") }}" width="170px" height="100px"> {% endif %}
+                    </td>
+                    <td style="display: flex;">
+                        <a style="padding-right: 5px" href="{{ path('product_show', {'id': product.id}) }}" class="btn btn-success">show <i class="fas fa-eye"></i></a> |
+                        <a href="{{ path('product_edit', {'id': product.id}) }}" class="btn btn-primary">edit <i class="fas fa-edit"></i></a> |
+                        {{ include('product/_delete_form.html.twig') }}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {{ knp_pagination_render(products) }}
 
-    <a href="{{ path('product_new') }}">Create new</a>
+
+    </div>
+
 {% endblock %}
