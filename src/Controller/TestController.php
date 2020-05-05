@@ -4,6 +4,7 @@ namespace App\Controller;
 
 
 
+use App\Service\MarkdownHelper;
 use Knp\Bundle\MarkdownBundle\MarkdownParserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,10 +17,6 @@ use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Cookie;
 
-
-
-
-
 class TestController extends AbstractController
 {
 
@@ -27,7 +24,7 @@ class TestController extends AbstractController
     /**
      * @Route("/news/{slug}", name="article_show")
      */
-    public function show($slug, AdapterInterface $cache,MarkdownParserInterface $markdown)
+    public function show($slug, AdapterInterface $cache,MarkdownParserInterface $markdown,MarkdownHelper $helper)
     {
         $comments = [
             'I ate a normal rock once. It did NOT taste like bacon!',
@@ -51,7 +48,8 @@ cow est ribeye adipisicing. Pig hamburger pork belly enim. Do porchetta minim ca
 fugiat.
 EOF;
 
-
+        $item = $helper->parse($articleContent);
+        dd($item);
         $item = $cache->getItem('markdown_'.md5($articleContent));
         if (!$item->isHit()) {
             $item->set($articleContent);

@@ -7,6 +7,7 @@ use App\Entity\Category;
 use App\Form\ProductType;
 use App\Repository\ProductRepository;
 use App\Repository\CategoryRepository;
+use App\Service\MarkdownHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,7 +26,16 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class ProductController extends AbstractController
 {
-
+    /**
+     * @Route("/test", name="product_test", methods={"GET"})
+     */
+    public function test(){
+        $repository = $this->getDoctrine()->getRepository(Product::class);
+        $product = $repository->findOneBy([
+            'name' => 'Bim bim']);
+        return $this->render('frontend/pages/index.html.twig', [
+        ]);
+    }
 
     /**
      * @Route("/", name="product_index", methods={"GET"})
@@ -68,10 +78,8 @@ class ProductController extends AbstractController
      */
     public function store(Request $request): Response
     {
-
         $data  = $request->request->all();
         $entityManager = $this->getDoctrine()->getManager();
-
         $product       = new Product();
         $product->setName($data['name']);
         $product->setSlug(str_replace(' ','-',$data['name']));
@@ -147,7 +155,6 @@ class ProductController extends AbstractController
         $product->setSlug(str_replace(' ','-',$data['name']));
         $product->setPrice($data['price']);
         $product->setCategoryId($data['category_id']);
-
         $image = $request->files->get('image');
         $extension = pathinfo($image->getClientOriginalName(),PATHINFO_EXTENSION);
         $allowed_extensions = array(".jpg","jpeg",".png",".gif");

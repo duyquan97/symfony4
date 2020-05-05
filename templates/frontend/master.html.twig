@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shop Nội Thất</title>
+    <!--link css-->
+    <base href="{{asset('/frontend')}}/">
+    <link rel="stylesheet" type="text/css" title="" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" title="" href="css/font-awesome.css">
+    <link rel="stylesheet" type="text/css" title="" href="css/slick.min.css">
+    <link rel="stylesheet" type="text/css" title="" href="css/slick-theme.min.css">
+    <link rel="stylesheet" href="css/animate.css">
+    <link rel="stylesheet" href="css/swiper.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.css">
+    <link rel="stylesheet" href="css/jquery.mmenu.all.css">
+    <link rel="stylesheet" type="text/css" title="" href="css/style.css">
+    <link rel="stylesheet" type="text/css" title="" href="css/responsive.css">
+    {% block css %} {% endblock %}
+</head>
+<body>
+{{ include('frontend/template/footer.html.twig') }}
+<main class="">
+    {% block main %} {% endblock %}
+</main>
+
+{{ include('frontend/template/footer.html.twig') }}
+
+
+<!--Link js-->
+</body>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+<script type="text/javascript" src="js/slick.min.js"></script>
+<script type="text/javascript" src="js/jquery.mmenu.all.js"></script>
+<script type="text/javascript" src="js/wow.min.js"></script>
+<!-- <script type="text/javascript" src="js/swiper.min.js"></script>  -->
+<!-- <script type="text/javascript" src="js/ranger"></script>  -->
+<script type="text/javascript" src="js/private.js"></script>
+{% block js %}
+{% endblock %}
+</html>

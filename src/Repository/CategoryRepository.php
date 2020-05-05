@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Category;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * @method Category|null find($id, $lockMode = null, $lockVersion = null)
@@ -26,22 +27,30 @@ class CategoryRepository extends ServiceEntityRepository
     public function list()
     {
         return $this->createQueryBuilder('c')
-            ->orderBy('c.id', 'ASC')
+            ->orderBy('c.id', 'DESC')
             ->getQuery()
             ->getResult()
         ;
     }
-
-
-    /*
-    public function findOneBySomeField($value): ?Category
+    public function sort()
     {
         return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
+            ->orderBy('c.id', 'DESC')
+            ->andWhere('c.id < 15')
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getResult()
+            ;
     }
-    */
+
+//    public function findAllEmailAlphabetical()
+//    {
+//        return $this->createQueryBuilder('u')
+//            ->orderBy('u.email', 'ASC')
+//            ->getQuery()
+//            ->execute()
+//            ;
+//    }
+
+
+
 }

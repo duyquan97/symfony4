@@ -44,6 +44,36 @@ class Product
      */
     private $slug;
 
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $description;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $status;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $featured;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $discount;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $price_discount;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $producer;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -105,6 +135,78 @@ class Product
     public function setSlug(?string $slug): self
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getStatus(): ?int
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?int $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function getFeatured(): ?int
+    {
+        return $this->featured;
+    }
+
+    public function setFeatured(?int $featured): self
+    {
+        $this->featured = $featured;
+
+        return $this;
+    }
+
+    public function getDiscount(): ?float
+    {
+        return $this->discount;
+    }
+
+    public function setDiscount(?float $discount): self
+    {
+        $this->discount = $discount;
+
+        return $this;
+    }
+
+    public function getPriceDiscount(): ?float
+    {
+        return $this->price_discount;
+    }
+
+    public function setPriceDiscount(?float $price_discount): self
+    {
+        $this->price_discount = $price_discount;
+
+        return $this;
+    }
+
+    public function getProducer(): ?string
+    {
+        return $this->producer;
+    }
+
+    public function setProducer(?string $producer): self
+    {
+        $this->producer = $producer;
 
         return $this;
     }

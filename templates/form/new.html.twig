@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <h1>Launch a new Article! ?</h1>
+    {{ form_start(articleForm)}}
+    {{ form_row(articleForm.name,{
+        label: 'Category Name'
+    })  }}
+    {{ form_row(articleForm.slug) }}
+    {{ form_row(articleForm.description) }}
+    {{ form_row(articleForm.author) }}
+    <div class="form-group" >
+        <label for="">Image</label>
+        <input type="text" name="image" class="form-control" style="border: none">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create!</button>
+    {{ form_end(articleForm) }}
+{% endblock %}
