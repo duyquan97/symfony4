@@ -1,4 +1,37 @@
 {{ form_start(form) }}
     {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+    <button class="btn btn-success">{{ button_label|default('Save') }}</button>
 {{ form_end(form) }}
+<script language = "javascript"
+        src = "https://code.jquery.com/jquery-2.2.4.min.js"></script>
+
+<script language = "javascript">
+    $(document).ready(function(){
+        $("#product_name").on("keyup", function(event){
+            var name = $(this).val();
+
+            $('#product_slug').val(name.replace(/ /g,'-'))
+        });
+
+        $("#product_price").on("keyup", function(event){
+            var price = $(this).val();
+            var discount = $('#product_discount').val();
+            if(price >= 0 && discount >= 0) {
+                var price_discount = price - (price * discount / 100);
+                price_discount < 0 ? $('#product_price_discount').val(0) : $('#product_price_discount').val(price_discount);
+            }
+
+        });
+        $("#product_discount").on("keyup", function(event){
+            var discount = $(this).val();
+            var price = $('#product_price').val();
+            if(price >= 0 && discount >= 0){
+                var price_discount = price - (price*discount/100);
+                price_discount < 0 ? $('#product_price_discount').val(0) : $('#product_price_discount').val(price_discount);
+
+            }
+
+
+        });
+    });
+</script>

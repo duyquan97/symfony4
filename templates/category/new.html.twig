@@ -8,17 +8,6 @@
     {{ include('category/_form.html.twig') }}
 
     <a href="{{ path('category_index') }}">back to list</a>
-    <script language = "javascript"
-            src = "https://code.jquery.com/jquery-2.2.4.min.js"></script>
 
-    <script language = "javascript">
-        $(document).ready(function(){
-            $("#category1_name").on("keyup", function(event){
-              var name = $(this).val();
-
-              $('#category1_slug').val(name.replace(/ /g,'-'))
-            });
-        });
-    </script>
 {% endblock %}
 

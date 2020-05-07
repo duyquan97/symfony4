@@ -1,9 +1,32 @@
-{{ form_start(articleForm) }}
-    {{ form_row(articleForm.title, {
-        label: 'Article title'
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/algolia-autocomplete.css') }}">
+{% endblock %}
+{% block body %}
+    <h1>Edit the Article! ?</h1>
+    {{ include('article_admin/_form.html.twig', {
+        button_text: 'Update!'
     }) }}
-    {{ form_row(articleForm.author) }}
-    {{ form_row(articleForm.content) }}
-    {{ form_row(articleForm.publishedAt) }}
-<button type="submit" class="btn btn-primary">{{ button_text }}</button>
-{{ form_end(articleForm) }}
+
+{% endblock %}
+{% block js %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.jquery.min.js"></script>
+    <script src="{{ asset('js/algolia-autocomplete.js') }}"></script>
+    <script >
+        $(document).ready(function() {
+            $('.js-user-autocomplete').autocomplete({hint: false}, [
+                {
+                    source: function(query, cb) {
+                        cb([
+                            {value: 'foo'},
+                            {value: 'bar'}
+                        ])
+                    }
+                }
+            ]);
+        });
+    </script>
+{% endblock %}

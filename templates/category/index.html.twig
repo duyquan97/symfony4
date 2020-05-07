@@ -3,9 +3,10 @@
 {% block title %}Category index{% endblock %}
 
 {% block body %}
-    <h1>Category index</h1>
+    <h1>Category</h1>
+    <a class="btn btn-success" style="margin-bottom: 20px" href="{{ path('category_new') }}">Create new</a>
 
-    <table class="table">
+    <table class="table" >
         <thead>
             <tr>
                 <th>Id</th>
@@ -22,9 +23,10 @@
                 <td>{{ category.name }}</td>
                 <td>{{ category.description }}</td>
                 <td>{{ category.slug }}</td>
-                <td>
-                    <a href="{{ path('category_show', {'id': category.id}) }}">show</a>
-                    <a href="{{ path('category_edit', {'id': category.id}) }}">edit</a>
+                <td >
+                    <a class="btn btn-success" href="{{ path('category_show', {'id': category.id}) }}">show</a>
+                    <a class="btn btn-primary" href="{{ path('category_edit', {'id': category.id}) }}">edit</a>
+                    <div style="padding-top: 5px">{{ include('category/_delete_form.html.twig') }}</div>
                 </td>
             </tr>
         {% else %}
@@ -34,6 +36,6 @@
         {% endfor %}
         </tbody>
     </table>
+    {{ knp_pagination_render(categories) }}
 
-    <a href="{{ path('category_new') }}">Create new</a>
 {% endblock %}

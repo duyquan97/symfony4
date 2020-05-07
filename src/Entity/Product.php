@@ -30,7 +30,7 @@ class Product
     private $price;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $category_id;
 
@@ -74,6 +74,11 @@ class Product
      */
     private $producer;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $code;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -103,12 +108,12 @@ class Product
         return $this;
     }
 
-    public function getCategoryId(): ?int
+    public function getCategoryId(): ?string
     {
         return $this->category_id;
     }
 
-    public function setCategoryId(?int $category_id): self
+    public function setCategoryId(?string $category_id): self
     {
         $this->category_id = $category_id;
 
@@ -207,6 +212,18 @@ class Product
     public function setProducer(?string $producer): self
     {
         $this->producer = $producer;
+
+        return $this;
+    }
+
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    public function setCode(?string $code): self
+    {
+        $this->code = $code;
 
         return $this;
     }

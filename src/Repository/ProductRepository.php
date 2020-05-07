@@ -23,7 +23,7 @@ class ProductRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Category[] Returns an array of Category objects
+     * @return Product[] Returns an array of Category objects
      */
 
     public function show($id)
@@ -41,44 +41,44 @@ class ProductRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Category[] Returns an array of Category objects
+     * @return Product[] Returns an array of Category objects
      */
-    public function filterData($input)
+    public function filterData($name,$category,$price_min,$price_max)
     {
        $data = $this->createQueryBuilder('p');
 
-        if (!empty($input['name'])) {
-            $name = $input['name'];
+        if (!empty($name)) {
             $data = $data->andWhere('p.name like :name')->setParameter('name', '%'.$name.'%');
         }
-        if (!empty($input['category_id'])) {
-            $category = $input['category_id'];
-            $data     = $data->andWhere('p.category_id = :category')->setParameter('category', $category);
+        if (!empty($category)) {
+
+            $data  = $data->andWhere('p.category_id = :category')->setParameter('category', $category);
         }
-        if (!empty('price_min') && !empty($input['price_max'])) {
-            $min  = $input['price_min'];
-            $max  = $input['price_max'];
+        if (!empty($price_min) && !empty($price_max)) {
+            $min  = $price_min;
+            $max  = $price_max;
             $data = $data->andWhere('p.price BETWEEN :min AND :max')->setParameter('min', $min)->setParameter('max', $max);
         }
-//        if (!empty($input['price_from'])) {
-//            $form = $input['price_from'];
-//            $data = $data->andWhere('p.price > :from')->setParameter('from',$form);
-//        }
-//        if (!empty($input['price_to'])) {
-//            $to   = $input['price_to'];
-//            $data = $data->andWhere('p.price < :to')->setParameter('to',$to);
-//        }
         $data = $data
-                ->select('p.id','p.name','p.price', 'p.image','c.name as category')
-                ->leftJoin(Category::class, 'c', Join::WITH, 'c.id = p.category_id' )
-                ->getQuery()
-                ->getResult();
-
+            ->select('p.id','p.code','p.name','p.price','p.discount','p.producer','p.image','p.featured','p.status','c.name as category')                ->leftJoin(Category::class, 'c', Join::WITH, 'c.id = p.category_id' )
+            ->getQuery()
+            ->getResult();
         return $data;
     }
 
 
-
+    /**
+     * @return Product[] Returns an array of Category objects
+     */
+    public function index()
+    {
+        $data = $this->createQueryBuilder('p')
+            ->select('p.id','p.code','p.name','p.price','p.discount','p.producer','p.image','p.featured','p.status','c.name as category')
+            ->leftJoin(Category::class, 'c', Join::WITH, 'c.id = p.category_id' )
+            ->getQuery()
+            ->getResult();
+        return $data;
+    }
 
 
     /*

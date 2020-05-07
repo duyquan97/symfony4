@@ -34,13 +34,20 @@ class CategoryRepository extends ServiceEntityRepository
     }
     public function sort()
     {
-        return $this->createQueryBuilder('c')
+       $data = $this->createQueryBuilder('c')
+            ->select('c.id ','c.name')
             ->orderBy('c.id', 'DESC')
             ->andWhere('c.id < 15')
             ->getQuery()
             ->getResult()
             ;
+        $array = [];
+        foreach ($data as $item){
+            $array[$item['name']] = $item['id'];
+        }
+        return $array;
     }
+
 
 //    public function findAllEmailAlphabetical()
 //    {

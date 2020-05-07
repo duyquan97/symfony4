@@ -1,4 +1,16 @@
 {{ form_start(form) }}
     {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+    <button class="btn btn-success">{{ button_label|default('Save') }}</button>
 {{ form_end(form) }}
+<script language = "javascript"
+        src = "https://code.jquery.com/jquery-2.2.4.min.js"></script>
+
+<script language = "javascript">
+    $(document).ready(function(){
+        $("#category1_name").on("keyup", function(event){
+            var name = $(this).val();
+
+            $('#category1_slug').val(name.replace(/ /g,'-'))
+        });
+    });
+</script>

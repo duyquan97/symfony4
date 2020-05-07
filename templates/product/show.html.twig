@@ -15,19 +15,56 @@
                 <th>Name</th>
                 <td>{{ product.name }}</td>
             </tr>
-            <tr>
-                <th>Price</th>
-                <td>{{ product.price }}</td>
-            </tr>
+
             <tr>
                 <th>Category_id</th>
-                <td>{{ product.category }}</td>
+                <td>{{ product.categoryId }}</td>
+            </tr>
+            <tr>
+                <th>Image</th>
+                <td>{% if not product.image is empty %}
+                        <img src="{{ asset("uploads/image/#{product.image}") }}" width="170px" height="100px">
+                    {% endif %}</td>
+            </tr>
+            <tr>
+                <th>Slug</th>
+                <td>{{ product.slug }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ product.description }}</td>
+            </tr>
+            <tr>
+                <th>Price</th>
+                <td>{{ product.price }} VND</td>
+            </tr>
+            <tr>
+                <th>Discount</th>
+                <td>{{ product.discount }} %</td>
+            </tr>
+            <tr>
+                <th>Price_discount</th>
+                <td>{{ product.priceDiscount }} VND</td>
+            </tr>
+            <tr>
+                <th>Producer</th>
+                <td>{{ product.producer }}</td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <td>{{ product.status }}</td>
+            </tr>
+            <tr>
+                <th>Featured</th>
+                <td>{{ product.featured }}</td>
             </tr>
         </tbody>
     </table>
 
-    <a href="{{ path('product_index') }}" class="btn btn-danger">back to list</a>
+    <a class="btn btn-primary" href="{{ path('product_edit', {'id': product.id}) }}">edit</a>
+    <a href="{{ path('product_index') }}">back to list</a>
 
-    <a href="{{ path('product_edit', {'id': product.id}) }}" class="btn btn-primary">edit</a>
+
+
 
 {% endblock %}
