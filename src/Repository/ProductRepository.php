@@ -23,7 +23,7 @@ class ProductRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Product[] Returns an array of Category objects
+     * @return Product[] Returns an array of Product objects
      */
 
     public function show($id)
@@ -41,26 +41,29 @@ class ProductRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Product[] Returns an array of Category objects
+     * @return Product[] Returns an array of Product objects
      */
     public function filterData($name,$category,$price_min,$price_max)
     {
-       $data = $this->createQueryBuilder('p');
+
+       $data = $this->createQueryBuilder('p')
+                    ->innerJoin('p.category','c')
+                    ->addSelect('c');
 
         if (!empty($name)) {
             $data = $data->andWhere('p.name like :name')->setParameter('name', '%'.$name.'%');
         }
         if (!empty($category)) {
 
-            $data  = $data->andWhere('p.category_id = :category')->setParameter('category', $category);
+            $data  = $data->andWhere('p.category = :category')->setParameter('category', $category);
         }
         if (!empty($price_min) && !empty($price_max)) {
-            $min  = $price_min;
-            $max  = $price_max;
-            $data = $data->andWhere('p.price BETWEEN :min AND :max')->setParameter('min', $min)->setParameter('max', $max);
+
+            $data = $data->andWhere('p.price BETWEEN :price_min AND :price_max')->setParameter('price_min', $price_min)->setParameter('price_max', $price_max);
         }
         $data = $data
-            ->select('p.id','p.code','p.name','p.price','p.discount','p.producer','p.image','p.featured','p.status','c.name as category')                ->leftJoin(Category::class, 'c', Join::WITH, 'c.id = p.category_id' )
+//            ->select('p.id','p.code','p.name','p.price','p.discount','p.producer','p.image','p.featured','p.status','c.name as category')
+//                ->leftJoin(Category::class, 'c', Join::WITH, 'c.id = p.category_id' )
             ->getQuery()
             ->getResult();
         return $data;
@@ -68,17 +71,19 @@ class ProductRepository extends ServiceEntityRepository
 
 
     /**
-     * @return Product[] Returns an array of Category objects
+     * @return Product[] Returns an array of Product objects
      */
-    public function index()
-    {
+    public function index(){
         $data = $this->createQueryBuilder('p')
-            ->select('p.id','p.code','p.name','p.price','p.discount','p.producer','p.image','p.featured','p.status','c.name as category')
-            ->leftJoin(Category::class, 'c', Join::WITH, 'c.id = p.category_id' )
+            ->innerJoin('p.category','c')
+            ->addSelect('c')
+            ->orderBy('p.id', 'DESC')
             ->getQuery()
             ->getResult();
-        return $data;
+        return  $data;
+
     }
+
 
 
     /*

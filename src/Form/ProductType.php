@@ -43,14 +43,23 @@ class ProductType extends AbstractType
                     'readonly'=>true
                 ]
             ])
-
-            ->add('category_id', ChoiceType::class, [
+            ->add('category', EntityType::class, [
+                'class' => Category::class,
+                'choice_label' => function(Category $category) {
+                    return sprintf(' %s', $category->getName());
+                },
                 'placeholder' => 'Choose an category',
-                'choices' => [
-                    $this->categoryRepository->sort()
-                ],
 
             ])
+
+//            ->add('category', ChoiceType::class, [
+//                'placeholder' => 'Choose an category',
+//                'choices' => [
+//                    $this->categoryRepository->sort()
+//                ],
+//
+//            ])
+
 
             ->add('image',FileType::class,[
                 'data_class' => null,

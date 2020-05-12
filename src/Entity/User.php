@@ -26,7 +26,7 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      * @Assert\NotBlank(message="Please enter an email")
-     * @Assert\Email()
+     * @Assert\Email(message="Please enter an email")
      */
     private $email;
 
@@ -56,6 +56,16 @@ class User implements UserInterface
      * @ORM\Column(type="datetime")
      */
     private $agreedTermsAt;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $token;
+
+    /**
+     * @ORM\Column(type="date", nullable=true)
+     */
+    private $expiresAt;
 
 
     public function getId(): ?int
@@ -157,12 +167,36 @@ class User implements UserInterface
 
     public function getAgreedTermsA(): ?\DateTimeInterface
     {
-        return $this->agreedTermsA;
+        return $this->agreedTermsAt;
     }
 
     public function agreeTerms()
     {
         $this->agreedTermsAt = new \DateTime();
+    }
+
+    public function getToken(): ?string
+    {
+        return $this->token;
+    }
+
+    public function setToken(?string $token): self
+    {
+        $this->token = $token;
+
+        return $this;
+    }
+
+    public function getExpiresAt(): ?\DateTimeInterface
+    {
+        return $this->expiresAt;
+    }
+
+    public function setExpiresAt(?\DateTimeInterface $expiresAt): self
+    {
+        $this->expiresAt = $expiresAt;
+
+        return $this;
     }
 
 

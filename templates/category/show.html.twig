@@ -25,6 +25,15 @@
             </tr>
         </tbody>
     </table>
+    {% for product in category.products  %}
+        <table>
+            <tr>
+                <td>  {{ product.id }} </td>
+                <td> <small> {{ product.name | length }} </small>  </td>
+            </tr>
+        </table>
+
+    {% endfor %}
 
 
     <a class="btn btn-primary" href="{{ path('category_edit', {'id': category.id}) }}">edit</a>

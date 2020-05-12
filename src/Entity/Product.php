@@ -29,10 +29,6 @@ class Product
      */
     private $price;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $category_id;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -75,9 +71,16 @@ class Product
     private $producer;
 
     /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="products")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $category;
+
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $code;
+
 
     public function getId(): ?int
     {
@@ -104,18 +107,6 @@ class Product
     public function setPrice(?int $price): self
     {
         $this->price = $price;
-
-        return $this;
-    }
-
-    public function getCategoryId(): ?string
-    {
-        return $this->category_id;
-    }
-
-    public function setCategoryId(?string $category_id): self
-    {
-        $this->category_id = $category_id;
 
         return $this;
     }
@@ -216,15 +207,28 @@ class Product
         return $this;
     }
 
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): self
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
     public function getCode(): ?string
     {
         return $this->code;
     }
 
-    public function setCode(?string $code): self
+    public function setCode(string $code): self
     {
         $this->code = $code;
 
         return $this;
     }
+
 }

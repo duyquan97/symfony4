@@ -27,15 +27,15 @@ class UserRepository extends ServiceEntityRepository
 
 
 
-    /*
-    public function findOneBySomeField($value): ?Product
+
+    public function findOneBySomeField($email): array
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.email = :email')
+            ->setParameter('email', $email)
             ->getQuery()
-            ->getOneOrNullResult()
+            ->getResult()
         ;
     }
-    */
+
 }

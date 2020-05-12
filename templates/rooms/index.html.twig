@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Rooms index{% endblock %}
+
+{% block body %}
+    <h1>Rooms index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Province</th>
+                <th>Price</th>
+                <th>Discount</th>
+                <th>Type</th>
+                <th>Room_total</th>
+                <th>Room_booked</th>
+                <th>Status</th>
+                <th>Featured</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for room in rooms %}
+            <tr>
+                <td>{{ room.id }}</td>
+                <td>{{ room.name }}</td>
+                <td>{{ room.province }}</td>
+                <td>{{ room.price }}</td>
+                <td>{{ room.discount }}</td>
+                <td>{{ room.type }}</td>
+                <td>{{ room.roomTotal }}</td>
+                <td>{{ room.roomBooked }}</td>
+                <td>{{ room.status }}</td>
+                <td>{{ room.featured }}</td>
+                <td>
+                    <a href="{{ path('rooms_show', {'id': room.id}) }}">show</a>
+                    <a href="{{ path('rooms_edit', {'id': room.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="23">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('rooms_new') }}">Create new</a>
+{% endblock %}
