@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ListHoliday index{% endblock %}
+
+{% block body %}
+    <h1>ListHoliday index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Date</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for list_holiday in list_holidays %}
+            <tr>
+                <td>{{ list_holiday.id }}</td>
+                <td>{{ list_holiday.name }}</td>
+                <td>{{ list_holiday.date ? list_holiday.date|date('Y-m-d') : '' }}</td>
+                <td>
+                    <a href="{{ path('list_holiday_show', {'id': list_holiday.id}) }}">show</a>
+                    <a href="{{ path('list_holiday_edit', {'id': list_holiday.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('list_holiday_new') }}">Create new</a>
+{% endblock %}

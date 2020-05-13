@@ -17,6 +17,9 @@
     "clue/stream-filter": {
         "version": "v1.4.1"
     },
+    "cocur/slugify": {
+        "version": "v4.0.0"
+    },
     "doctrine/annotations": {
         "version": "1.0",
         "recipe": {
@@ -186,6 +189,9 @@
             "config/packages/flysystem.yaml",
             "var/storage/.gitignore"
         ]
+    },
+    "league/html-to-markdown": {
+        "version": "4.9.1"
     },
     "michelf/php-markdown": {
         "version": "1.9.0"
@@ -636,6 +642,9 @@
         "version": "v3.0.3"
     },
     "twig/intl-extra": {
+        "version": "v3.0.3"
+    },
+    "twig/markdown-extra": {
         "version": "v3.0.3"
     },
     "twig/twig": {

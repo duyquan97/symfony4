@@ -57,12 +57,12 @@ class Rooms
     private $image;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $status;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $featured;
 
@@ -77,7 +77,10 @@ class Rooms
      */
     private $discount;
 
-    private $service;
+    /**
+     * @ORM\Column(type="json")
+     */
+    private $service = [];
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -103,6 +106,26 @@ class Rooms
      * @ORM\Column(type="float", nullable=true)
      */
     private $holiday;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $code;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $people;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $toilet;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $bedRoom;
 
     public function getId(): ?int
     {
@@ -205,24 +228,24 @@ class Rooms
         return $this;
     }
 
-    public function getStatus(): ?int
+    public function getStatus(): ?string
     {
         return $this->status;
     }
 
-    public function setStatus(?int $status): self
+    public function setStatus(?string $status): self
     {
         $this->status = $status;
 
         return $this;
     }
 
-    public function getFeatured(): ?int
+    public function getFeatured(): ?string
     {
         return $this->featured;
     }
 
-    public function setFeatured(?int $featured): self
+    public function setFeatured(?string $featured): self
     {
         $this->featured = $featured;
 
@@ -255,12 +278,12 @@ class Rooms
     }
 
 
-    public function getService(): ?string
+    public function getService(): ?array
     {
         return $this->service;
     }
 
-    public function setService(?string $service): self
+    public function setService(?array $service): self
     {
         $this->service = $service;
 
@@ -323,6 +346,54 @@ class Rooms
     public function setHoliday(?float $holiday): self
     {
         $this->holiday = $holiday;
+
+        return $this;
+    }
+
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    public function setCode(?string $code): self
+    {
+        $this->code = $code;
+
+        return $this;
+    }
+
+    public function getPeople(): ?int
+    {
+        return $this->people;
+    }
+
+    public function setPeople(?int $people): self
+    {
+        $this->people = $people;
+
+        return $this;
+    }
+
+    public function getToilet(): ?int
+    {
+        return $this->toilet;
+    }
+
+    public function setToilet(?int $toilet): self
+    {
+        $this->toilet = $toilet;
+
+        return $this;
+    }
+
+    public function getBedRoom(): ?int
+    {
+        return $this->bedRoom;
+    }
+
+    public function setBedRoom(?int $bedRoom): self
+    {
+        $this->bedRoom = $bedRoom;
 
         return $this;
     }

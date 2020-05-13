@@ -9,13 +9,14 @@
         <thead>
             <tr>
                 <th>Id</th>
+                <th>Code</th>
                 <th>Name</th>
                 <th>Province</th>
                 <th>Price</th>
                 <th>Discount</th>
                 <th>Type</th>
-                <th>Room_total</th>
-                <th>Room_booked</th>
+                <th>Room total</th>
+                <th>Room booked</th>
                 <th>Status</th>
                 <th>Featured</th>
                 <th>actions</th>
@@ -25,10 +26,11 @@
         {% for room in rooms %}
             <tr>
                 <td>{{ room.id }}</td>
+                <td>{{ room.code }}</td>
                 <td>{{ room.name }}</td>
                 <td>{{ room.province }}</td>
-                <td>{{ room.price }}</td>
-                <td>{{ room.discount }}</td>
+                <td>{{ room.price|number_format }}VND</td>
+                <td>{{ room.discount }}%</td>
                 <td>{{ room.type }}</td>
                 <td>{{ room.roomTotal }}</td>
                 <td>{{ room.roomBooked }}</td>

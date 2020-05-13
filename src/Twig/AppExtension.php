@@ -5,6 +5,7 @@ namespace App\Twig;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
+use Twig\Extra\Markdown\MarkdownExtension;
 
 class AppExtension extends AbstractExtension
 {

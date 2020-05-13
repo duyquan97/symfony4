@@ -6,12 +6,14 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "antishov/doctrine-extensions-bundle": "^1.4",
+        "cocur/slugify": "^4.0",
         "doctrine/annotations": "^1.10",
         "friendsofsymfony/rest-bundle": "^2.7",
         "gedmo/doctrine-extensions": "^2.4",
         "knplabs/knp-markdown-bundle": "^1.8",
         "knplabs/knp-paginator-bundle": "^5.2",
         "league/flysystem-bundle": "^1.5",
+        "league/html-to-markdown": "^4.9",
         "msurguy/honeypot": "^1.1",
         "sensio/framework-extra-bundle": "^5.5",
         "sensiolabs/security-checker": "^6.0",
@@ -35,7 +37,8 @@
         "symfony/validator": "4.4.*",
         "symfony/web-server-bundle": "4.4.*",
         "symfony/yaml": "4.4.*",
-        "twig/intl-extra": "^3.0"
+        "twig/intl-extra": "^3.0",
+        "twig/markdown-extra": "^3.0"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.3",

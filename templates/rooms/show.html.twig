@@ -12,6 +12,10 @@
                 <td>{{ room.id }}</td>
             </tr>
             <tr>
+                <th>Code</th>
+                <td>{{ room.code }}</td>
+            </tr>
+            <tr>
                 <th>Name</th>
                 <td>{{ room.name }}</td>
             </tr>
@@ -32,12 +36,12 @@
                 <td>{{ room.street }}</td>
             </tr>
             <tr>
-                <th>ShortDescription</th>
+                <th>Short Description</th>
                 <td>{{ room.shortDescription }}</td>
             </tr>
             <tr>
                 <th>Description</th>
-                <td>{{ room.Description }}</td>
+                <td>{{ room.description | nl2br }}</td>
             </tr>
             <tr>
                 <th>Image</th>
@@ -45,34 +49,48 @@
             </tr>
             <tr>
                 <th>Price</th>
-                <td>{{ room.price }}</td>
+                <td>{{ room.price|number_format }}VND</td>
             </tr>
             <tr>
                 <th>Weekend</th>
-                <td>{{ room.weekend }}</td>
+                <td>{{ room.weekend }}%</td>
             </tr>
             <tr>
                 <th>Holiday</th>
-                <td>{{ room.holiday }}</td>
+                <td>{{ room.holiday }}%</td>
             </tr>
             <tr>
                 <th>Discount</th>
-                <td>{{ room.discount }}</td>
+                <td>{{ room.discount }}%</td>
             </tr>
             <tr>
                 <th>Service</th>
-                <td>{{ room.service }}</td>
+                <td>{% for service in room.service %}
+                            <span class="badge badge-light">{{ service }}</span>
+                    {% endfor %}</td></td>
             </tr>
             <tr>
                 <th>Type</th>
                 <td>{{ room.type }}</td>
             </tr>
             <tr>
-                <th>Room_total</th>
+                <th>Maximum people</th>
+                <td>{{ room.people }}</td>
+            </tr>
+            <tr>
+                <th>Room Total</th>
                 <td>{{ room.roomTotal }}</td>
             </tr>
             <tr>
-                <th>Room_booked</th>
+                <th>Toilet</th>
+                <td>{{ room.toilet }}</td>
+            </tr>
+            <tr>
+                <th>Bed Room</th>
+                <td>{{ room.bedRoom }}</td>
+            </tr>
+            <tr>
+                <th>Room Booked</th>
                 <td>{{ room.roomBooked }}</td>
             </tr>
             <tr>

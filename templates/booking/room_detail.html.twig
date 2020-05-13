@@ -1,0 +1,127 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Booking!{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+    <div class="col-md-12">
+        {% if not room.image is empty %}
+            <a href="{{ path('room_detail', {'id': room.id, 'slug': room.slug}) }}"><img src="{{ asset("uploads/image/#{room.image}") }}" width="100%"></a>
+        {% endif %}
+    </div>
+
+    <div class="col-content" style="padding-top: 20px">
+        <div class="title">
+            <h1>{{ room.name }}</h1>
+        </div>
+        <div class="row" >
+            <div class="col-md-8">
+                <div style="padding-top: 10px">
+                    <span>{{ room.street }}, {{ room.district }}, {{ room.province  }}</span>
+                    <br>
+                    <span>{{ room.bedroom }} Bed Room · {{ room.toilet }} Toilet</span>
+                </div>
+                <div class="price" style="padding-top: 20px">
+                    {% if not room.discount is empty  %} {% set discount = room.discount %} {% else %} {% set discount = 0 %} {% endif %}
+                    {% set priceWeekend =  (room.price + (room.price * room.weekend /100)) %}
+                    {% set priceHoliday = (room.price + (room.price * room.holiday /100)) %}
+                    <h5>Price <span style="color: red">{{ discount > 0 ? "(-#{discount} %)" : '' }}</span></h5>
+                    <div class="col-md-6">
+
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <th>Monday - Friday</th>
+                                    <td>{{ (room.price - (room.price * discount/100)) | number_format}} VND</td>
+                                </tr>
+                                <tr>
+                                    <th>Saturday - Sunday</th>
+                                    <td>{{ (priceWeekend - priceWeekend * discount/100) | number_format }} VND</td>
+                                </tr>
+                                <tr>
+                                    <th>Holiday</th>
+                                    <td>{{ (priceHoliday - priceHoliday *discount/100) | number_format }} VND</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+                <div class="description" style="padding-top: 20px">
+                    <h3>{{ room.shortDescription }}</h3>
+                    <div>{{ room.description | nl2br }}</div>
+
+                </div>
+            </div>
+            <div class="col-md-4">
+                <h2 style="color: goldenrod">Booking</h2>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+    <h3>Customer information</h3>
+    <form action="{{ path('booking',{'id': room.id}) }}" method="GET" style="padding-bottom: 300px">
+        <div class="row" >
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">From date</label>
+                            <input type="text" id="from_date" name="from_date" placeholder="From date" class="form-control"  required {% if fromDate is defined  %} value="{{ fromDate }}" {% endif %}>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">To date</label>
+                            <input type="text" id="to_date" name="to_date" placeholder="To date" class="form-control" required  {% if toDate is defined  %} value="{{ toDate }}" {% endif %}>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">Your name</label>
+                            <input type="text" id="name" name="name" placeholder="Your name" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">Your phone</label>
+                            <input type="text" id="phone" name="phone" placeholder="Your phone" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">Your email</label>
+                            <input type="email" id="email" name="email" placeholder="Your email" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+        <div class="form-group">
+            <button class="btn btn-success" type="submit"> Booking</button>
+        </div>
+    </form>
+
+{% endblock %}
+{% block javascripts %}
+    <script>
+        $(document).ready(function () {
+            $("#to_date, #from_date").datepicker({
+                dateFormat: 'yy-mm-dd',
+                minDate:'0D',
+            });
+        });
+    </script>
+{% endblock %}
