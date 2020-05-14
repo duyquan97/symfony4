@@ -3,13 +3,18 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\OrderRepository")
  * @ORM\Table(name="`order`")
  */
+
 class Order
 {
+
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -36,11 +41,7 @@ class Order
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $phone;
-
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $romeId;
+    
 
     /**
      * @ORM\Column(type="date", nullable=true)
@@ -73,14 +74,32 @@ class Order
     private $accept;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="datetime")
+     * @Gedmo\Timestampable(on="create")
      */
     private $createdAt;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="datetime")
+     * @Gedmo\Timestampable(on="update")
      */
     private $updatedAt;
+
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $currency;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Rooms")
+     */
+    private $room;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User")
+     */
+    private $user;
 
     public function getId(): ?int
     {
@@ -135,17 +154,6 @@ class Order
         return $this;
     }
 
-    public function getRomeId(): ?int
-    {
-        return $this->romeId;
-    }
-
-    public function setRomeId(?int $romeId): self
-    {
-        $this->romeId = $romeId;
-
-        return $this;
-    }
 
     public function getFromDate(): ?\DateTimeInterface
     {
@@ -227,7 +235,6 @@ class Order
     public function setCreatedAt(?\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
-
         return $this;
     }
 
@@ -239,6 +246,41 @@ class Order
     public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+        return $this;
+    }
+    
+    public function getCurrency(): ?string
+    {
+        return $this->currency;
+    }
+
+    public function setCurrency(?string $currency): self
+    {
+        $this->currency = $currency;
+
+        return $this;
+    }
+
+    public function getRoom(): ?Rooms
+    {
+        return $this->room;
+    }
+
+    public function setRoom(?Rooms $room): self
+    {
+        $this->room = $room;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

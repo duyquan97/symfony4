@@ -15,7 +15,8 @@ security:
                 class: App\Entity\User
                 property: email
     role_hierarchy:
-        ROLE_SUPER_ADMIN: [ROLE_ADMIN_EDIT, ROLE_ADMIN_VIEW, ROLE_ALLOWED_TO_SWITCH]
+        ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_USER]
+
         # used to reload user from session & other features (e.g. switch_user)
         # used to reload user from session & other features (e.g. switch_user)
 
@@ -33,7 +34,7 @@ security:
                 entry_point: App\Security\LoginFormAuthenticator
             logout:
                 path: app_logout
-                target: product_index
+                target: search_room
 
                 # where to redirect after logout
                 # target: app_any_route
@@ -54,5 +55,5 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-         - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+         - { path: ^/rooms, roles: ROLE_ADMIN }
+#         - { path: ^/booking, roles: ROLE_USER }

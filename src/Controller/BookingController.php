@@ -2,9 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\Order;
 use App\Entity\Rooms;
+use App\Repository\OrderRepository;
 use App\Repository\RoomsRepository;
+use App\Repository\UserRepository;
 use Knp\Component\Pager\PaginatorInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -34,6 +38,7 @@ class BookingController extends AbstractController
 
     /**
      * @Route("/room/{id}/{slug}", name="room_detail")
+     *
      */
     public function detail(int $id, RoomsRepository $roomsRepository,PaginatorInterface $paginator)
     {
@@ -45,40 +50,76 @@ class BookingController extends AbstractController
     }
 
     /**
-     * @Route("/booking/{id}}", name="booking",methods={"GET"})
+     * @Route("/booking/{id}}", name="booking",methods={"POST"})
+     * @IsGranted("BOOKING")
      */
-    public function booking(int $id, RoomsRepository $roomsRepository, Request $request )
+    public function booking(int $id, RoomsRepository $roomsRepository, Request $request , UserRepository $userRepository, OrderRepository $orderRepository)
     {
-        $holidayList = ['01-01','02-14','04-30','05-01','09-02','12-24'];
+
+        $user = $this->getUser();
+        $holidayList = ['01-01', '02-14', '04-30', '05-01', '09-02', '12-24'];
 
         $room = $roomsRepository->find($id);
-        $data = $request->query->all();
-        $fromDate = strtotime( $data['from_date']);
+        $data = $request->request->all();
+        $fromDate = strtotime($data['from_date']);
         $toDate = strtotime($data['to_date']);
         $datediff = abs($toDate - $fromDate);
-        $days = floor($datediff / (60*60*24));
+        $days = floor($datediff / (60 * 60 * 24));
         $weekendCount = 0;
         $holidayCount = 0;
-        for ( $i = 0; $i <= $days -1; $i++){
-            $next_date = date("Y-m-d", mktime(0,0,0,date("n", $fromDate),date("j",$fromDate)+ $i ,date("Y", $fromDate)));
-            if (in_array(date('m-d',strtotime($next_date)),$holidayList) ){
-                $holidayCount ++;
+        $listDay = $orderRepository->listDay(date_create($data['from_date']), date_create($data['to_date']));
+        if (empty($user)) {
+            $this->addFlash('success', 'You need to log in to booking!');
+        } elseif (!empty($listDay)) {
+            $this->addFlash('success', 'Room was booked on this day, please book another day!');
+
+        } elseif ($user && $listDay == []) {
+            for ($i = 0; $i <= $days - 1; $i++) {
+                $next_date = date("Y-m-d", mktime(0, 0, 0, date("n", $fromDate), date("j", $fromDate) + $i, date("Y", $fromDate)));
+                if (in_array(date('m-d', strtotime($next_date)), $holidayList)) {
+                    $holidayCount++;
+                }
+                $dateWeekend = date('w', strtotime($next_date));
+                if ($dateWeekend == 5 || $dateWeekend == 6) {
+                    $weekendCount += 1;
+                }
             }
-            $dateWeekend = date('w', strtotime($next_date));
-            if ($dateWeekend == 5  || $dateWeekend == 6){
-                $weekendCount += 1;
-            }
+            !empty($room->getDiscount()) ? $discount = $room->getDiscount() : $discount = 0;
+            !empty($room->getWeekend()) ? $weekend = $room->getWeekend() : $weekend = 0;
+            !empty($room->getHoliday()) ? $holiday = $room->getHoliday() : $holiday = 0;
+            $priceWeekend = ($weekendCount * ($room->getPrice() + ($room->getPrice() * $weekend / 100)));
+            $priceHoliday = ($holidayCount * ($room->getPrice() + ($room->getPrice() * $holiday / 100)));
+            $price = ($days - $holidayCount - $weekendCount) * $room->getPrice();
+            $total = $priceHoliday + $priceWeekend + $price - (($priceHoliday + $priceWeekend + $price) * $discount / 100);
+
+            $order = new Order();
+            $order->setCode(strtoupper(uniqid()));
+            $order->setName($data['name']);
+            $order->setEmail($data['email']);
+            $order->setPhone($data['phone']);
+            $order->setFromDate(date_create($data['from_date']));
+            $order->setToDate(date_create($data['to_date']));
+            $order->setPrice($total);
+            $order->setCurrency('VND');
+            $order->setDays($days);
+            $order->setStatus('On');
+            $order->setAccept('Off');
+            $order->setRoom($room);
+            $order->setUser($user);
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($order);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'You have successfully booked a room.');
+
         }
-        !empty($room->getDiscount()) ? $discount = $room->getDiscount() : $discount = 0;
-        !empty($room->getWeekend()) ? $weekend  = $room->getWeekend() : $weekend  = 0;
-        !empty($room->getHoliday()) ? $holiday  = $room->getHoliday() : $holiday  = 0;
-        $priceWeekend = ($weekendCount * ($room->getPrice() + ($room->getPrice() * $weekend / 100)));
-        $priceHoliday = ($holidayCount * ($room->getPrice() + ($room->getPrice() * $holiday / 100)));
-        $price = ($days - $holidayCount - $weekendCount) * $room->getPrice();
-        $total = $priceHoliday + $priceWeekend + $price - (($priceHoliday + $priceWeekend + $price) * $discount / 100);
-        return $this->render('booking/room_detail.html.twig', [
-            'room' => $room,
+
+        return $this->redirectToRoute('room_detail', [
+            'slug' => $room->getSlug(),
+            'id' => $id,
 
         ]);
     }
+
 }

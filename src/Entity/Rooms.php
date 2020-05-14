@@ -127,6 +127,11 @@ class Rooms
      */
     private $bedRoom;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="rooms")
+     */
+    private $user;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -394,6 +399,18 @@ class Rooms
     public function setBedRoom(?int $bedRoom): self
     {
         $this->bedRoom = $bedRoom;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

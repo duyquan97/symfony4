@@ -26,7 +26,7 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      * @Assert\NotBlank(message="Please enter an email")
-     * @Assert\Email(message="Please enter an email")
+     *
      */
     private $email;
 
@@ -66,6 +66,16 @@ class User implements UserInterface
      * @ORM\Column(type="date", nullable=true)
      */
     private $expiresAt;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Rooms", mappedBy="user")
+     */
+    private $rooms;
+
+    public function __construct()
+    {
+        $this->rooms = new ArrayCollection();
+    }
 
 
     public function getId(): ?int
@@ -195,6 +205,37 @@ class User implements UserInterface
     public function setExpiresAt(?\DateTimeInterface $expiresAt): self
     {
         $this->expiresAt = $expiresAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Rooms[]
+     */
+    public function getRooms(): Collection
+    {
+        return $this->rooms;
+    }
+
+    public function addRoom(Rooms $room): self
+    {
+        if (!$this->rooms->contains($room)) {
+            $this->rooms[] = $room;
+            $room->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRoom(Rooms $room): self
+    {
+        if ($this->rooms->contains($room)) {
+            $this->rooms->removeElement($room);
+            // set the owning side to null (unless already changed)
+            if ($room->getUser() === $this) {
+                $room->setUser(null);
+            }
+        }
 
         return $this;
     }

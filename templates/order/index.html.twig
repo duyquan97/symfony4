@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Order index{% endblock %}
+
+{% block body %}
+    <h1>Order index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Room Id</th>
+                <th>FromDate</th>
+                <th>ToDate</th>
+                <th>Price</th>
+                <th>Days</th>
+                <th>Status</th>
+                <th>Accept</th>
+                <th>User Id</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.code }}</td>
+                <td>{{ order.name }}</td>
+                <td>{{ order.email }}</td>
+                <td>{{ order.phone }}</td>
+                <td>{{ order.room.id }}</td>
+                <td>{{ order.fromDate ? order.fromDate|date('Y-m-d') : '' }}</td>
+                <td>{{ order.toDate ? order.toDate|date('Y-m-d') : '' }}</td>
+                <td>{{ order.price | number_format }}{{ order.currency }}</td>
+                <td>{{ order.days }}</td>
+                <td>{% if  order.status == 'Off' %} <span class="badge badge-warning">{{ order.status }}</span> {% else %} <span class="badge badge-success">{{ order.status }}</span> {% endif %}</td>
+                <td>{% if  order.accept == 'Off' %} <span class="badge badge-warning">{{ order.accept }}</span> {% else %} <span class="badge badge-success">{{ order.accept }}</span> {% endif %}</td>
+                <td>{{ order.user.id }}</td>
+                <td style="display: flex">
+                    <a class="btn btn-success" href="{{ path('order_show', {'id': order.id}) }}"><i class="far fa-eye"></i></a>|
+                    <a class="btn btn-primary" href="{{ path('order_edit', {'id': order.id}) }}"><i class="fas fa-edit"></i></a>|
+                    {{ include('order/_delete_form.html.twig') }}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="17">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

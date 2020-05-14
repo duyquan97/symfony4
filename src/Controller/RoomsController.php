@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Rooms;
 use App\Form\RoomsType;
 use App\Repository\RoomsRepository;
+use App\Repository\UserRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,15 +16,16 @@ use Cocur\Slugify\Slugify;
 
 /**
  * @Route("/rooms")
+ * @IsGranted("ROLE_ADMIN")
  */
 class RoomsController extends AbstractController
 {
     /**
      * @Route("/", name="rooms_index", methods={"GET"})
+     *
      */
     public function index(RoomsRepository $roomsRepository): Response
     {
-
         return $this->render('rooms/index.html.twig', [
             'rooms' => $roomsRepository->findAll(),
         ]);
@@ -31,12 +34,14 @@ class RoomsController extends AbstractController
     /**
      * @Route("/new", name="rooms_new", methods={"GET","POST"})
      */
-    public function new(Request $request): Response
+    public function new(Request $request, UserRepository $userRepository): Response
     {
+        $user = $this->getUser();
+
         $room = new Rooms();
         $form = $this->createForm(RoomsType::class, $room);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid() && $user) {
             $slugify = new Slugify();
             $image = $form['image']->getData();
             if ($image) {
@@ -58,6 +63,7 @@ class RoomsController extends AbstractController
             $code = strtoupper(uniqid());
             $room->setCode($code);
             $room->setSlug($slugify->slugify($form['name']->getData()));
+            $room->getUser($userRepository->find($user));
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($room);
@@ -75,6 +81,7 @@ class RoomsController extends AbstractController
 
     /**
      * @Route("/{id}", name="rooms_show", methods={"GET"})
+     * @IsGranted("EDIT_VIEW", subject="room")
      */
     public function show(Rooms $room): Response
     {
@@ -86,13 +93,15 @@ class RoomsController extends AbstractController
 
     /**
      * @Route("/{id}/edit", name="rooms_edit", methods={"GET","POST"})
+     * @IsGranted("EDIT_VIEW", subject="room")
      */
-    public function edit(Request $request, Rooms $room ): Response
+    public function edit(Request $request, Rooms $room , UserRepository $userRepository): Response
     {
+        $user = $this->getUser();
         $form = $this->createForm(RoomsType::class, $room);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid() && $user) {
             $image = $form['image']->getData();
             if ($image) {
                 $originalFilename = pathinfo($image->getClientOriginalName(), PATHINFO_EXTENSION);
@@ -113,6 +122,7 @@ class RoomsController extends AbstractController
             $slugify = new Slugify();
             $slug = $slugify->slugify($form['name']->getData());
             $room->setSlug($slug);
+            $room->setUser($userRepository->find($user->getId()));
 
             $this->getDoctrine()->getManager()->flush();
 
