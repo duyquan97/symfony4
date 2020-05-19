@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\Rooms;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use mysql_xdevapi\DatabaseObject;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
  * @method Rooms|null find($id, $lockMode = null, $lockVersion = null)
@@ -23,7 +25,7 @@ class RoomsRepository extends ServiceEntityRepository
       * @return Rooms[] Returns an array of Rooms objects
       */
 
-    public function search($keyWord,$fromDate,$toDate,$type)
+    public function search($keyWord,  $fromDate,  $toDate,  $type)
     {
         $data = $this->createQueryBuilder('r');
         if (!empty($keyWord)){
@@ -42,15 +44,28 @@ class RoomsRepository extends ServiceEntityRepository
     }
 
 
-    /*
-    public function findOneBySomeField($value): ?Rooms
+
+    public function findOneBySlug(string $slug): ?Rooms
     {
         return $this->createQueryBuilder('r')
-            ->andWhere('r.exampleField = :val')
-            ->setParameter('val', $value)
+            ->andWhere('r.slug = :val')
+            ->setParameter('val', $slug)
             ->getQuery()
             ->getOneOrNullResult()
         ;
     }
-    */
+
+    public function findById($id)
+    {
+        $data = $this->createQueryBuilder('r');
+        if (!empty($id)) {
+            $data = $data
+                ->andWhere('r.id = :id')
+                ->setParameter('id', $id);
+        }
+        $data = $data
+            ->orderBy('r.id','DESC');
+        return $data;
+    }
+
 }

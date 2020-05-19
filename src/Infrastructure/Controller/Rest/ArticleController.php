@@ -18,16 +18,18 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use FOS\RestBundle\Controller\Annotations as Rest;
 
+
 class ArticleController extends AbstractController
 {
     /**
      * Creates an Article resource
-     * @Rest\Post("/product")
+     * @Rest\Post("/")
      * @param Request $request
      * @return View
      */
     public function postArticle(Request $request, ProductRepository $productRepository, UserRepository $userRepository, CategoryRepository $categoryRepository): View
     {
+        dd(123);
         $data = $request->query->all();
         $email = $data['email'] ? $data['email'] : '';
         $command = $data['command'] ? $data['command'] : '';

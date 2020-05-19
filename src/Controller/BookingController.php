@@ -3,123 +3,131 @@
 namespace App\Controller;
 
 use App\Entity\Order;
-use App\Entity\Rooms;
+use App\Form\BookingType;
+use App\Form\OrderType;
+use App\Form\SearchType;
 use App\Repository\OrderRepository;
 use App\Repository\RoomsRepository;
 use App\Repository\UserRepository;
+use App\Service\BookingHelper;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
-use function GuzzleHttp\Psr7\str;
+use Symfony\Component\HttpFoundation\Response;
+use Carbon\Carbon;
 
 class BookingController extends AbstractController
 {
     /**
-     * @Route("/search", name="search_room")
+     * @Route("/booking", name="booking_index")
      */
     public function search(Request $request, RoomsRepository $roomsRepository,PaginatorInterface $paginator)
     {
-        $keyWord  = $request->query->get('key_word');
-        $fromDate = $request->query->get('from_date');
-        $toDate   = $request->query->get('to_date');
-        $type     = $request->query->get('type');
+        $form = $this->createForm(SearchType::class);
+        $form->handleRequest($request);
+        $keyWord  = $form->get('keyWord')->getData();
+        $fromDate = $form->get('fromDate')->getData();
+        $toDate   = $form->get('toDate')->getData();
+        $type     = $form->get('type')->getData();
 
-        $rooms = $paginator->paginate($roomsRepository->search($keyWord,$fromDate,$toDate,$type), $request->query->getInt('page', 1), 6);
+        $session = new Session();
+        !empty($fromDate) ? $session->set('from_date',$fromDate) : '';
+        !empty($toDate) ? $session->set('to_date',$toDate) : '';
+        $rooms = $paginator->paginate($roomsRepository->search( $keyWord,$fromDate,$toDate,$type), $request->query->getInt('page', 1), 6);
         return $this->render('booking/index.html.twig', [
-            'rooms' => $rooms,
-            'keyWord' => $keyWord,
-            'type' => $type,
-            'fromDate' => $fromDate,
-            'toDate' => $toDate,
+            'rooms'    => $rooms,
+            'form' => $form->createView(),
         ]);
     }
-
     /**
-     * @Route("/room/{id}/{slug}", name="room_detail")
+     * @Route("/booking/{slug}", name="booking_detail")
      *
      */
-    public function detail(int $id, RoomsRepository $roomsRepository,PaginatorInterface $paginator)
+    public function show(string $slug, RoomsRepository $roomsRepository,OrderRepository $orderRepository, BookingHelper $bookingHelper, Request $request)
     {
-        $room = $roomsRepository->find($id);
-        return $this->render('booking/room_detail.html.twig', [
-            'room' => $room,
+        $user = $this->getUser();
+        $room = $roomsRepository->findOneBySlug($slug);
+        $session = new Session();
+        $order = new Order();
+        $form = $this->createForm(BookingType::class, $order);
+        $input = $form->handleRequest($request);
+        $now = date_create(date('Y-m-d',strtotime("now")));
+        $listBooking = $orderRepository->listBooking($now,$room);
 
+        if ($form->isSubmitted() && $form->isValid()) {
+            $from_date = Carbon::parse($input['fromDate']->getData())->toDateString();
+            $to_date = Carbon::parse($input['toDate']->getData())->toDateString();
+            $data = $bookingHelper->checkOut($room->getId(), $from_date, $to_date);
+            if (empty($user)){
+                $this->addFlash('success', '');
+                $this->addFlash('error', 'You need to log in to booking!');
+            }
+            elseif (!is_array($data)){
+                $this->addFlash('success', '');
+                $this->addFlash('error', $data);
+            }
+            elseif (is_array($data)) {
+                $order->setCode(strtoupper(uniqid()));
+                $order->setPrice($data['sumPrice']);
+                $order->setCurrency('VND');
+                $order->setDays($data['days']);
+                $order->setStatus('On');
+                $order->setAccept('Off');
+                $order->setRoom($room);
+                $order->setUser($user);
+
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($order);
+                $entityManager->flush();
+
+                $this->addFlash('success', 'You have successfully booked a room.');
+                $this->addFlash('error', '');
+            }
+
+            return $this->redirectToRoute('booking_new', [
+                'slug' => $room->getSlug(),
+            ]);
+        }
+
+        return $this->render('booking/room_detail.html.twig', [
+            'form' => $form->createView(),
+            'room' => $room,
+            'lists' => $listBooking,
+            'data' => '',
         ]);
     }
 
     /**
-     * @Route("/booking/{id}}", name="booking",methods={"POST"})
-     * @IsGranted("BOOKING")
+     * @Route("/booking/new", name="booking_new")
+     *
      */
-    public function booking(int $id, RoomsRepository $roomsRepository, Request $request , UserRepository $userRepository, OrderRepository $orderRepository)
+    public function new(Request $request){
+        $order = new Order();
+        $form = $this->createForm(BookingType::class, $order);
+        $form->handleRequest($request);
+        dd(123);
+    }
+
+    /**
+     * @Route("/ajax/booking", name="ajax_booking",methods={"POST"})
+     *
+     */
+    public function ajaxPrice(Request $request, BookingHelper $bookingHelper)
     {
-
-        $user = $this->getUser();
-        $holidayList = ['01-01', '02-14', '04-30', '05-01', '09-02', '12-24'];
-
-        $room = $roomsRepository->find($id);
-        $data = $request->request->all();
-        $fromDate = strtotime($data['from_date']);
-        $toDate = strtotime($data['to_date']);
-        $datediff = abs($toDate - $fromDate);
-        $days = floor($datediff / (60 * 60 * 24));
-        $weekendCount = 0;
-        $holidayCount = 0;
-        $listDay = $orderRepository->listDay(date_create($data['from_date']), date_create($data['to_date']));
-        if (empty($user)) {
-            $this->addFlash('success', 'You need to log in to booking!');
-        } elseif (!empty($listDay)) {
-            $this->addFlash('success', 'Room was booked on this day, please book another day!');
-
-        } elseif ($user && $listDay == []) {
-            for ($i = 0; $i <= $days - 1; $i++) {
-                $next_date = date("Y-m-d", mktime(0, 0, 0, date("n", $fromDate), date("j", $fromDate) + $i, date("Y", $fromDate)));
-                if (in_array(date('m-d', strtotime($next_date)), $holidayList)) {
-                    $holidayCount++;
-                }
-                $dateWeekend = date('w', strtotime($next_date));
-                if ($dateWeekend == 5 || $dateWeekend == 6) {
-                    $weekendCount += 1;
-                }
-            }
-            !empty($room->getDiscount()) ? $discount = $room->getDiscount() : $discount = 0;
-            !empty($room->getWeekend()) ? $weekend = $room->getWeekend() : $weekend = 0;
-            !empty($room->getHoliday()) ? $holiday = $room->getHoliday() : $holiday = 0;
-            $priceWeekend = ($weekendCount * ($room->getPrice() + ($room->getPrice() * $weekend / 100)));
-            $priceHoliday = ($holidayCount * ($room->getPrice() + ($room->getPrice() * $holiday / 100)));
-            $price = ($days - $holidayCount - $weekendCount) * $room->getPrice();
-            $total = $priceHoliday + $priceWeekend + $price - (($priceHoliday + $priceWeekend + $price) * $discount / 100);
-
-            $order = new Order();
-            $order->setCode(strtoupper(uniqid()));
-            $order->setName($data['name']);
-            $order->setEmail($data['email']);
-            $order->setPhone($data['phone']);
-            $order->setFromDate(date_create($data['from_date']));
-            $order->setToDate(date_create($data['to_date']));
-            $order->setPrice($total);
-            $order->setCurrency('VND');
-            $order->setDays($days);
-            $order->setStatus('On');
-            $order->setAccept('Off');
-            $order->setRoom($room);
-            $order->setUser($user);
-
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($order);
-            $entityManager->flush();
-
-            $this->addFlash('success', 'You have successfully booked a room.');
-
+        $input = $request->request->all();
+        $data = $bookingHelper->checkOut($input['id'], $input['from_date'], $input['to_date']);
+        $html = '';
+        if (is_array($data)){
+            $html .= '<h5 id="days">Days: '.$data['days'].'</h5>';
+            $html .= '<h5 id="price-total">Price: '.number_format($data['sumPrice']).'VND</h5>';
+            return new Response($html);
         }
+        $html .= '<div class="alert alert-danger">'.$data.'</div>';
+        return new Response($html);
 
-        return $this->redirectToRoute('room_detail', [
-            'slug' => $room->getSlug(),
-            'id' => $id,
-
-        ]);
     }
 
 }

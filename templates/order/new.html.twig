@@ -3,9 +3,147 @@
 {% block title %}New Order{% endblock %}
 
 {% block body %}
-    <h1>Create new Order</h1>
+    <h1>Create new Booking</h1>
+    {{ form_start(form) }}
 
-    {{ include('order/_form.html.twig') }}
+    {% for message in app.flashes('error') %}
+        {% if message|length > 0 %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endif %}
+    {% endfor %}
+    <style>
+        .hidden {
+            display: none; }
+    </style>
+    <div class="alert alert-danger hidden"  id="error">
 
+    </div>
+    {% if room != '' %}
+        <h5>
+            {{ room.name }}
+        </h5>
+    {% endif %}
+    <div class="row" >
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        {{ form_row(form.room) }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form_row(form.name, {
+                            'attr': {'value': app.user ? app.user.name : '' }
+                        }) }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form_row(form.email, {
+                            'attr': {'value': app.user ? app.user.email : '' }
+                        }) }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form_row(form.phone, {
+
+                        }) }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form_row(form.days, {
+                            'attr': {'value': data != '' ? data.days : ''  }
+                        }) }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form_row(form.fromDate, {
+                            'attr': {'value': data ? data.fromDate : "now"|date("Y-m-d") }
+                        }) }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form_row(form.toDate, {
+                            'attr': {'value': data ? data.toDate : "tomorrow"|date("Y-m-d") }
+                        }) }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form_row(form.price, {
+                            'attr': {'value': data ? data.sumPrice : '' }
+                        }) }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form_row(form.currency, {
+                            'attr': {'value':'VND' }
+                        }) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="form-group">
+        <button class="btn btn-success"  type="submit"> Booking </button>
+    </div>
+    {{ form_end(form) }}
     <a href="{{ path('order_index') }}">back to list</a>
+{% endblock %}
+{% block javascripts %}
+    <script >
+        $(document).ready(function () {
+            $("#order_fromDate, #order_toDate").datepicker({
+                dateFormat: 'yy-mm-dd',
+                minDate:'0D',
+            });
+        });
+        $("#order_fromDate").on('change', (function(e){
+            var from_date = $(this).val();
+            var to_date = $('#order_toDate').val();
+            $.ajax({
+                type:'POST',
+                url:'{{ path('ajax_newOrder') }}',
+                data:{from_date:from_date,to_date:to_date},
+                success:function(data){
+                    if (data.sumPrice) {
+                        $('#order_price').val(data.sumPrice);
+                        $('#order_days').val(data.days);
+                        $('#error').addClass('hidden').text(data)
+                    }
+                    else{
+                        $('#error').removeClass('hidden').text(data)
+                    }
+                }
+            });
+        }));
+        $("#order_toDate").on('change', (function(e){
+            var  to_date = $(this).val();
+            var  from_date  = $('#order_fromDate').val();
+            $.ajax({
+                type:'POST',
+                url:'{{ path('ajax_newOrder') }}',
+                data:{from_date:from_date,to_date:to_date},
+                success:function(data){
+                    if (data.sumPrice) {
+                        $('#order_price').val(data.sumPrice);
+                        $('#order_days').val(data.days);
+                        $('#error').addClass('hidden').text(data)
+                    }
+                    else{
+                        $('#error').removeClass('hidden').text(data)
+                    }
+                }
+            });
+        }));
+    </script>
 {% endblock %}

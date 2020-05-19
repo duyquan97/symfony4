@@ -41,9 +41,11 @@
                 <td>{% if  order.accept == 'Off' %} <span class="badge badge-warning">{{ order.accept }}</span> {% else %} <span class="badge badge-success">{{ order.accept }}</span> {% endif %}</td>
                 <td>{{ order.user.id }}</td>
                 <td style="display: flex">
-                    <a class="btn btn-success" href="{{ path('order_show', {'id': order.id}) }}"><i class="far fa-eye"></i></a>|
-                    <a class="btn btn-primary" href="{{ path('order_edit', {'id': order.id}) }}"><i class="fas fa-edit"></i></a>|
+                    <a class="btn btn-success" href="{{ path('order_show', {'id': order.id}) }}"><i class="far fa-eye"></i></a>
+                    {% if app.user and is_granted("ROLE_ADMIN") %}
+                    |<a class="btn btn-primary" href="{{ path('order_edit', {'id': order.id}) }}"><i class="fas fa-edit"></i></a>|
                     {{ include('order/_delete_form.html.twig') }}
+                    {%  endif %}
                 </td>
             </tr>
         {% else %}

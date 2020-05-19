@@ -77,10 +77,7 @@
                 <th>Maximum people</th>
                 <td>{{ room.people }}</td>
             </tr>
-            <tr>
-                <th>Room Total</th>
-                <td>{{ room.roomTotal }}</td>
-            </tr>
+
             <tr>
                 <th>Toilet</th>
                 <td>{{ room.toilet }}</td>
@@ -88,10 +85,6 @@
             <tr>
                 <th>Bed Room</th>
                 <td>{{ room.bedRoom }}</td>
-            </tr>
-            <tr>
-                <th>Room Booked</th>
-                <td>{{ room.roomBooked }}</td>
             </tr>
             <tr>
                 <th>Status</th>
@@ -103,10 +96,74 @@
             </tr>
         </tbody>
     </table>
+    <div class="List-Booking col-md-6">
+        {% if not lists is empty %}
+            <h5>List Booked</h5>
+            <table class="table">
+                <tbody>
+                <tr>
+                    <th>From Date</th>
+                    <th>To Date</th>
+                </tr>
+                {% for list in lists %}
+                    <tr>
+                        <td>{{list.fromDate ? list.fromDate|date('Y-m-d') : '' }}</td>
+                        <td>{{list.toDate ? list.toDate|date('Y-m-d') : '' }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+
+    {% for message in app.flashes('error') %}
+        {% if message|length > 0 %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endif %}
+    {% endfor %}
+    {% set from_date = app.session.get('from_date') %}
+    {% set to_date = app.session.get('to_date') %}
+
+    {{ form_start(form) }}
+    <div class="row" >
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        {{ form_row(form.fromDate, {
+                            'attr': {'value': from_date ? from_date : "now"|date("Y-m-d") }
+                        }) }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        {{ form_row(form.toDate, {
+                            'attr': {'value': to_date ? to_date : "tomorrow"|date("Y-m-d") }
+                        }) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="form-group">
+        <button class="btn btn-success"  type="submit"> Booking</button>
+    </div>
+    {{ form_end(form) }}
 
     <a href="{{ path('rooms_index') }}">back to list</a>
 
-    <a href="{{ path('rooms_edit', {'id': room.id}) }}">edit</a>
-
-    {{ include('rooms/_delete_form.html.twig') }}
 {% endblock %}
+{% block javascripts %}
+    <script >
+        $(document).ready(function () {
+            $("#choose_date_fromDate, #choose_date_toDate").datepicker({
+                dateFormat: 'yy-mm-dd',
+                minDate:'0D',
+            });
+        });
+    </script>
+{% endblock %}
+

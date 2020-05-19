@@ -19,7 +19,7 @@ class OrderVoter extends Voter
     {
         // replace with your own logic
         // https://symfony.com/doc/current/security/voters.html
-        return in_array($attribute, ['ACCEPT'])
+        return in_array($attribute, ['ACCEPT','SHOW','NEW'])
             && $subject instanceof \App\Entity\Order;
     }
 
@@ -37,8 +37,20 @@ class OrderVoter extends Voter
                 if ($this->security->isGranted('ROLE_ADMIN')){
                     return true;
                 }
-                break;
-
+                return false;
+            case 'SHOW':
+                if ($subject->getUser() == $user || $this->security->isGranted('ROLE_ADMIN')){
+                    return true;
+                }
+                return false;
+            case 'NEW':
+                if ( !$this->security->isGranted('ROLE_ADMIN') && $this->security->isGranted('ROLE_USER') ){
+                    return true;
+                }
+                if ( $this->security->isGranted('ROLE_SUPER_ADMIN')){
+                    return true;
+                }
+                return false;
         }
 
         return false;

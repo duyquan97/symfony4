@@ -1,0 +1,204 @@
+{#{% extends 'base.html.twig' %}#}
+
+{#{% block title %}Booking!{% endblock %}#}
+
+{#{% block body %}#}
+{#<style>#}
+{#    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }#}
+{#    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }#}
+{#</style>#}
+
+{#    <div class="col-md-12">#}
+{#        {% if not room.image is empty %}#}
+{#            <img src="{{ asset("uploads/image/#{room.image}") }}" width="100%">#}
+{#        {% endif %}#}
+{#    </div>#}
+
+{#    <div class="col-content" style="padding-top: 20px">#}
+{#        <div class="title">#}
+{#            <h1>{{ room.name }}</h1>#}
+{#        </div>#}
+{#        <div class="row" >#}
+{#            <div class="col-md-8">#}
+{#                <div style="padding-top: 10px">#}
+{#                    <span>{{ room.street }}, {{ room.district }}, {{ room.province  }}</span>#}
+{#                    <br>#}
+{#                    <span>{{ room.bedroom }} Bed Room · {{ room.toilet }} Toilet</span>#}
+{#                </div>#}
+{#                <div class="price" style="padding-top: 20px">#}
+{#                    {% if not room.discount is empty  %} {% set discount = room.discount %} {% else %} {% set discount = 0 %} {% endif %}#}
+{#                    {% set priceWeekend =  (room.price + (room.price * room.weekend /100)) %}#}
+{#                    {% set priceHoliday = (room.price + (room.price * room.holiday /100)) %}#}
+{#                    <h5>Price <span style="color: red">{{ discount > 0 ? "(-#{discount} %)" : '' }}</span></h5>#}
+{#                    <div class="col-md-6">#}
+
+{#                        <table class="table">#}
+{#                            <tbody>#}
+{#                                <tr>#}
+{#                                    <th>Monday - Friday</th>#}
+{#                                    <td>{{ (room.price - (room.price * discount/100)) | number_format}} VND</td>#}
+{#                                </tr>#}
+{#                                <tr>#}
+{#                                    <th>Saturday - Sunday</th>#}
+{#                                    <td>{{ (priceWeekend - priceWeekend * discount/100) | number_format }} VND</td>#}
+{#                                </tr>#}
+{#                                <tr>#}
+{#                                    <th>Holiday</th>#}
+{#                                    <td>{{ (priceHoliday - priceHoliday *discount/100) | number_format }} VND</td>#}
+{#                                </tr>#}
+{#                            </tbody>#}
+{#                        </table>#}
+{#                    </div>#}
+
+{#                </div>#}
+{#                <div class="description" style="padding-top: 20px">#}
+{#                    <h3>{{ room.shortDescription }}</h3>#}
+{#                    <div>{{ room.description | nl2br }}</div>#}
+
+{#                </div>#}
+{#            </div>#}
+{#            <div class="col-md-4">#}
+{#                <h2 style="color: goldenrod">Booking</h2>#}
+{#                <div id="load-price">#}
+{#                    {% if data is iterable %}#}
+{#                        <h5 id="days">Days: {{  data.days}}</h5>#}
+{#                        <h5 id="days">Price: {{  data.sumPrice}}</h5>#}
+{#                    {% else %}#}
+{#                        <div class="alert alert-danger">#}
+{#                            {{ data }}#}
+{#                        </div>#}
+{#                    {% endif %}#}
+{#                    {% for message in app.flashes('success') %}#}
+{#                        {% if message|length >  0 %}#}
+{#                            <div class="alert alert-success">#}
+{#                                {{ message }}#}
+{#                            </div>#}
+{#                        {% endif %}#}
+{#                    {% endfor %}#}
+
+{#                    {% for message in app.flashes('error') %}#}
+{#                        {% if message|length > 0 %}#}
+{#                            <div class="alert alert-danger">#}
+{#                                {{ message }}#}
+{#                            </div>#}
+{#                        {% endif %}#}
+{#                    {% endfor %}#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+
+{#    <hr>#}
+{#    <div class="List-Booking col-md-6">#}
+{#        {% if not lists is empty %}#}
+{#            <h5>List Booked</h5>#}
+{#            <table class="table">#}
+{#                <tbody>#}
+{#                <tr>#}
+{#                    <th>From Date</th>#}
+{#                    <th>To Date</th>#}
+{#                </tr>#}
+{#                {% for list in lists %}#}
+{#                <tr>#}
+{#                    <td>{{list.fromDate ? list.fromDate|date('Y-m-d') : '' }}</td>#}
+{#                    <td>{{list.toDate ? list.toDate|date('Y-m-d') : '' }}</td>#}
+{#                </tr>#}
+{#                {% endfor %}#}
+{#                </tbody>#}
+{#            </table>#}
+{#        {% endif %}#}
+{#    </div>#}
+{#    <h3>Customer information</h3>#}
+
+
+{#        {% set from_date = app.session.get('from_date') %}#}
+{#        {% set to_date = app.session.get('to_date') %}#}
+
+{#        {{ form_start(form)#}
+{#        }}#}
+{#        <div class="row" >#}
+{#            <div class="col-md-12">#}
+{#                <div class="row">#}
+{#                    <div class="col-md-4">#}
+{#                        <div class="form-group">#}
+{#                            {{ form_row(form.fromDate) }}#}
+{#                        </div>#}
+{#                    </div>#}
+{#                    <div class="col-md-4">#}
+{#                        <div class="form-group">#}
+{#                           {{ form_row(form.toDate, {#}
+{#                               'attr': {'value': to_date ? to_date : "tomorrow"|date("Y-m-d") }#}
+{#                            }) }}#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#            <div class="col-md-12">#}
+{#                <div class="row">#}
+{#                    <div class="col-md-4">#}
+{#                        <div class="form-group">#}
+{#                            {{ form_row(form.name, {#}
+{#                                'attr': {'value': app.user ? app.user.name : '' }#}
+{#                            }) }}#}
+{#                        </div>#}
+{#                    </div>#}
+{#                    <div class="col-md-4">#}
+{#                        <div class="form-group">#}
+{#                            {{ form_row(form.email, {#}
+{#                                'attr': {'value': app.user ? app.user.email : '' }#}
+{#                            }) }}#}
+{#                        </div>#}
+{#                    </div>#}
+{#                    <div class="col-md-4">#}
+{#                        <div class="form-group">#}
+{#                            {{ form_row(form.phone, {#}
+
+{#                            }) }}#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#        <div class="form-group">#}
+{#            <button class="btn btn-success"  type="submit"> Booking</button>#}
+{#        </div>#}
+{#    {{ form_end(form) }}#}
+
+{#{% endblock %}#}
+{#{% block javascripts %}#}
+{#    <script>#}
+{#        $(document).ready(function () {#}
+{#            $("#booking_fromDate, #booking_toDate").datepicker({#}
+{#                dateFormat: 'yy-mm-dd',#}
+{#                minDate:'0D',#}
+{#            });#}
+{#        });#}
+
+{#        $("#booking_fromDate").on('change', (function(e){#}
+{#            var from_date = $(this).val();#}
+{#            var to_date = $('#booking_toDate').val();#}
+{#            var room_id = {{ room.id }};#}
+{#            $.ajax({#}
+{#                type:'POST',#}
+{#                url:'{{ path('ajax_booking') }}',#}
+{#                data:{from_date:from_date,to_date:to_date, id:room_id},#}
+{#                success:function(data){#}
+{#                    $('#load-price').empty().html(data);#}
+{#                }#}
+{#            });#}
+{#        }));#}
+{#        $("#booking_toDate").on('change', (function(e){#}
+{#            var  to_date = $(this).val();#}
+{#            var  from_date  = $('#booking_fromDate').val();#}
+{#            var room_id = {{ room.id }};#}
+{#            $.ajax({#}
+{#                type:'POST',#}
+{#                url:'{{ path('ajax_booking') }}',#}
+{#                data:{from_date:from_date,to_date:to_date,id:room_id},#}
+{#                success:function(data){#}
+{#                    $('#load-price').empty().html(data);#}
+{#                }#}
+{#            });#}
+{#        }));#}
+{#    </script>#}
+{#{% endblock %}#}

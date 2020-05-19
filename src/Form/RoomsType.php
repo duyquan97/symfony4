@@ -6,9 +6,13 @@ use App\Entity\Rooms;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -87,18 +91,7 @@ class RoomsType extends AbstractType
                 'required' => false,
                 'mapped' => false
             ])
-            ->add('status', ChoiceType::class,[
-                'choices' => [
-                    'On'  => 'On',
-                    'Off' => 'Off',
-                ]
-            ])
-            ->add('featured', ChoiceType::class,[
-                'choices' => [
-                    'On'  => 'On',
-                    'Off' => 'Off',
-                ]
-            ])
+
             ->add('price', null,[
                 'constraints' => [
                     new NotBlank([
@@ -124,6 +117,7 @@ class RoomsType extends AbstractType
                     'placeholder' => '%',
                 ]
             ])
+
             ->add('service',ChoiceType::class,[
                 'multiple' => true,
                 'choices' => [
@@ -167,31 +161,21 @@ class RoomsType extends AbstractType
                     ]),
                 ]
             ])
-            ->add('bed_room',null,[
-                'attr' => [
-                    'min' => 1,
-                    'placeholder' => 'Bed Room',
-                ],
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'Bed Room not blank!'
-                    ]),
+            ->add('status', ChoiceType::class,[
+                'choices' => [
+                    'On'  => 'On',
+                    'Off' => 'Off',
                 ]
             ])
-            ->add('room_total',null,[
+            ->add('featured', ChoiceType::class,[
+                'choices' => [
+                    'On'  => 'On',
+                    'Off' => 'Off',
+                ]
+            ])
 
-             'attr' => [
-                 'min'         => 0,
-                 'placeholder' => 'Import total room',
-             ]
-            ])
-            ->add('room_booked',null,[
-                'attr' => [
-                    'min'         => 0,
-                    'placeholder' => 'Import booked room',
-                ]
-            ])
         ;
+
     }
 
     public function configureOptions(OptionsResolver $resolver)

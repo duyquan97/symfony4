@@ -10,7 +10,7 @@
 
     <div class="col-md-12">
         {% if not room.image is empty %}
-            <a href="{{ path('room_detail', {'id': room.id, 'slug': room.slug}) }}"><img src="{{ asset("uploads/image/#{room.image}") }}" width="100%"></a>
+            <img src="{{ asset("uploads/image/#{room.image}") }}" width="100%">
         {% endif %}
     </div>
 
@@ -59,42 +59,74 @@
             </div>
             <div class="col-md-4">
                 <h2 style="color: goldenrod">Booking</h2>
+                <div id="load-price">
+                    {% if  %}
+                        <h5 id="days">Days: {{  data.days}}</h5>
+                        <h5 id="days">Price: {{  data.sumPrice}}</h5>
 
-
-
+                    {% endif %}
                     {% for message in app.flashes('success') %}
-                        <div class="alert alert-success">
-                            {{ message }}
-                        </div>
+                        {% if message|length >  0 %}
+                            <div class="alert alert-success">
+                                {{ message|length }}
+                            </div>
+                        {% endif %}
                     {% endfor %}
 
-{#                    {% for message in app.flashes('errors') %}#}
-{#                        <div class="alert alert-danger">#}
-{#                            {{ message }}#}
-{#                        </div>#}
-{#                    {% endfor %}#}
-
+                    {% for message in app.flashes('error') %}
+                        {% if message|length > 0 %}
+                            <div class="alert alert-danger">
+                                {{ message }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>
 
     <hr>
+    <div class="List-Booking col-md-6">
+        {% if not lists is empty %}
+            <h5>List Booked</h5>
+            <table class="table">
+                <tbody>
+                <tr>
+                    <th>From Date</th>
+                    <th>To Date</th>
+                </tr>
+                {% for list in lists %}
+                <tr>
+                    <td>{{list.fromDate ? list.fromDate|date('Y-m-d') : '' }}</td>
+                    <td>{{list.toDate ? list.toDate|date('Y-m-d') : '' }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
     <h3>Customer information</h3>
 
-    <form action="{{ path('booking',{'id': room.id}) }}" method="POST" style="padding-bottom: 300px">
+
+        {% set from_date = app.session.get('from_date') %}
+        {% set to_date = app.session.get('to_date') %}
+
+        {{ form_start(form) }}
         <div class="row" >
             <div class="col-md-12">
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="">From date</label>
-                            <input type="text" id="from_date" name="from_date" placeholder="From date" class="form-control"  required {% if fromDate is defined  %} value="{{ fromDate }}" {% endif %}>
+                            {{ form_row(form.fromDate, {
+                                'attr': {'value': from_date ? from_date : "now"|date("Y-m-d") }
+                            }) }}
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="">To date</label>
-                            <input type="text" id="to_date" name="to_date" placeholder="To date" class="form-control" required  {% if toDate is defined  %} value="{{ toDate }}" {% endif %}>
+                           {{ form_row(form.toDate, {
+                               'attr': {'value': to_date ? to_date : "tomorrow"|date("Y-m-d") }
+                            }) }}
                         </div>
                     </div>
                 </div>
@@ -103,20 +135,23 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="">Your name</label>
-                            <input type="text" id="name" name="name" placeholder="Your name" class="form-control" required>
+                            {{ form_row(form.name, {
+                                'attr': {'value': app.user ? app.user.name : '' }
+                            }) }}
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="">Your phone</label>
-                            <input type="text" id="phone" name="phone" placeholder="Your phone" class="form-control" required>
+                            {{ form_row(form.email, {
+                                'attr': {'value': app.user ? app.user.email : '' }
+                            }) }}
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="">Your email</label>
-                            <input type="email" id="email" name="email" placeholder="Your email" class="form-control" required>
+                            {{ form_row(form.phone, {
+
+                            }) }}
                         </div>
                     </div>
                 </div>
@@ -124,18 +159,43 @@
             </div>
         </div>
         <div class="form-group">
-            <button class="btn btn-success" type="submit"> Booking</button>
+            <button class="btn btn-success"  type="submit"> Booking</button>
         </div>
-    </form>
+    {{ form_end(form) }}
 
 {% endblock %}
 {% block javascripts %}
     <script>
         $(document).ready(function () {
-            $("#to_date, #from_date").datepicker({
+            $("#booking_fromDate, #booking_toDate").datepicker({
                 dateFormat: 'yy-mm-dd',
                 minDate:'0D',
             });
         });
+
+        $("#booking_fromDate").on('change', (function(e){
+            var from_date = $(this).val();
+            var to_date = $('#booking_toDate').val();
+            $.ajax({
+                type:'POST',
+                url:'{{ path('ajax_price',{'id':room.id}) }}',
+                data:{from_date:from_date,to_date:to_date},
+                success:function(data){
+                    $('#load-price').empty().html(data);
+                }
+            });
+        }));
+        $("#booking_toDate").on('change', (function(e){
+            var  to_date = $(this).val();
+            var  from_date  = $('#booking_fromDate').val();
+            $.ajax({
+                type:'POST',
+                url:'{{ path('ajax_price',{'id':room.id}) }}',
+                data:{from_date:from_date,to_date:to_date},
+                success:function(data){
+                    $('#load-price').empty().html(data);
+                }
+            });
+        }));
     </script>
 {% endblock %}

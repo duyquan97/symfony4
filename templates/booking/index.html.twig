@@ -18,35 +18,28 @@
     <div class="serach">
         <div class="row" style="padding-top: 10px">
             <div class="col-md-12">
-                <form action="{{ path('search_room') }}" method="get">
+                {{ form_start(form) }}
                     <div class="row">
                         <div class="col-md-9">
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group" >
-                                        <input type="text" name="key_word" placeholder="Search" class="form-control" {% if keyWord is defined  %} value="{{ keyWord }}" {% endif %} >
+                                        {{ form_row(form.keyWord) }}
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="">Type Room</label>
-                                        <select name="type" class="form-control">
-                                            <option value="">Choose type room</option>
-                                            <option value="vip" {% if type is defined and type == 'vip'  %} selected {% endif %}>VIP</option>
-                                            <option value="normal" {% if type is defined  and type == 'normal' %} selected {% endif %}>NORMAL</option>
-                                        </select>
+                                        {{ form_row(form.type) }}
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="">From date</label>
-                                        <input type="text" id="from_date" name="from_date" placeholder="From date" class="form-control"  {% if fromDate is defined  %} value="{{ fromDate }}" {% endif %}>
+                                        {{ form_row(form.fromDate) }}
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="">To date</label>
-                                        <input type="text" id="to_date" name="to_date" placeholder="To date" class="form-control"  {% if toDate is defined  %} value="{{ toDate }}" {% endif %}>
+                                        {{ form_row(form.toDate) }}
                                     </div>
                                 </div>
                             </div>
@@ -60,7 +53,7 @@
                         </div>
                     </div>
 
-                </form>
+                {{ form_end(form) }}
             </div>
         </div>
     </div>
@@ -72,11 +65,11 @@
                 <div class="row">
                     <div class="img-thumbnail">
                         {% if not room.image is empty %}
-                            <a href="{{ path('room_detail', {'id': room.id, 'slug': room.slug}) }}"><img src="{{ asset("uploads/image/#{room.image}") }}" width="100%"></a>
+                            <a href="{{ path('booking_detail', {'slug': room.slug}) }}"><img src="{{ asset("uploads/image/#{room.image}") }}" width="100%"></a>
                         {% endif %}
                     </div>
                     <div  style="padding-top: 5px">
-                        <h5><a  href="{{ path('room_detail', {'id': room.id, 'slug': room.slug}) }}">{{ room.name }}</a></h5>
+                        <h5><a  href="{{ path('booking_detail', {'slug': room.slug}) }}">{{ room.name }}</a></h5>
                     </div>
                     <div >
                         <span style="font-size: 1rem">{{ room.people}} people · {{ room.bedRoom}} Bed room · {{ room.toilet}} Toilet</span>
@@ -98,10 +91,11 @@
 {% block javascripts %}
     <script>
         $(document).ready(function () {
-            $("#to_date, #from_date").datepicker({
+            $("#search_fromDate, #search_toDate").datepicker({
                 dateFormat: 'yy-mm-dd',
                 minDate:'0D',
             });
         });
+
     </script>
 {% endblock %}

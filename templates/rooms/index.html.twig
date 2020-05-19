@@ -4,7 +4,48 @@
 
 {% block body %}
     <h1>Rooms index</h1>
+    <div class="serach">
+        <div class="row" style="padding-top: 10px">
+            <div class="col-md-12">
+                {{ form_start(form) }}
+                <div class="row">
+                    <div class="col-md-9">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group" >
+                                    {{ form_row(form.keyWord) }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    {{ form_row(form.type) }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    {{ form_row(form.fromDate) }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    {{ form_row(form.toDate) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="col-md-3" style="padding-top: 50px">
+                            <div class="form-group">
+                                <button type="submit" class="form-controll btn btn-success">Search <i class="fas fa-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
     <table class="table">
         <thead>
             <tr>
@@ -15,8 +56,6 @@
                 <th>Price</th>
                 <th>Discount</th>
                 <th>Type</th>
-                <th>Room total</th>
-                <th>Room booked</th>
                 <th>Status</th>
                 <th>Featured</th>
                 <th>actions</th>
@@ -32,13 +71,14 @@
                 <td>{{ room.price|number_format }}VND</td>
                 <td>{{ room.discount }}%</td>
                 <td>{{ room.type }}</td>
-                <td>{{ room.roomTotal }}</td>
-                <td>{{ room.roomBooked }}</td>
                 <td>{{ room.status }}</td>
                 <td>{{ room.featured }}</td>
-                <td>
-                    <a href="{{ path('rooms_show', {'id': room.id}) }}">show</a>
-                    <a href="{{ path('rooms_edit', {'id': room.id}) }}">edit</a>
+                <td style="display: flex">
+                    <a class="btn btn-success" href="{{ path('rooms_show', {'id': room.id}) }}"><i class="far fa-eye"></i></a>
+                    {% if app.user and is_granted("ROLE_ADMIN") %}
+                        |<a class="btn btn-primary" href="{{ path('rooms_edit', {'id': room.id}) }}"><i class="fas fa-edit"></i></a>|
+                        {{ include('rooms/_delete_form.html.twig') }}
+                    {%  endif %}
                 </td>
             </tr>
         {% else %}
@@ -48,6 +88,17 @@
         {% endfor %}
         </tbody>
     </table>
-
-    <a href="{{ path('rooms_new') }}">Create new</a>
+    {% if app.user and is_granted("ROLE_ADMIN") %}
+        <a href="{{ path('rooms_new') }}">Create new</a>
+    {%  endif %}
+{% endblock %}
+{% block javascripts %}
+    <script >
+        $(document).ready(function () {
+            $("#search_fromDate, #search_toDate").datepicker({
+                dateFormat: 'yy-mm-dd',
+                minDate:'0D',
+            });
+        });
+    </script>
 {% endblock %}

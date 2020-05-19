@@ -2,32 +2,54 @@
 
 namespace App\Controller;
 
+use App\Entity\Order;
 use App\Entity\Rooms;
+use App\Form\BookingType;
+use App\Form\ChooseDateType;
 use App\Form\RoomsType;
+use App\Form\SearchType;
+use App\Repository\OrderRepository;
 use App\Repository\RoomsRepository;
 use App\Repository\UserRepository;
+use App\Service\BookingHelper;
+use Carbon\Carbon;
+use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
 use Cocur\Slugify\Slugify;
+use function GuzzleHttp\Promise\all;
 
 /**
  * @Route("/rooms")
- * @IsGranted("ROLE_ADMIN")
+ *
  */
 class RoomsController extends AbstractController
 {
     /**
-     * @Route("/", name="rooms_index", methods={"GET"})
+     * @Route("/", name="rooms_index")
      *
      */
-    public function index(RoomsRepository $roomsRepository): Response
+    public function index(RoomsRepository $roomsRepository, Request $request, PaginatorInterface $paginator): Response
     {
+        $form = $this->createForm(SearchType::class);
+        $form->handleRequest($request);
+        $keyWord  = $form->get('keyWord')->getData();
+        $fromDate = $form->get('fromDate')->getData();
+        $toDate   = $form->get('toDate')->getData();
+        $type     = $form->get('type')->getData();
+        $session = new Session();
+
+        !empty($fromDate) ? $session->set('from_date',$fromDate) : '';
+        !empty($toDate) ? $session->set('to_date',$toDate) : '';
+        $rooms = $paginator->paginate($roomsRepository->search( $keyWord,$fromDate,$toDate,$type), $request->query->getInt('page', 1), 6);
         return $this->render('rooms/index.html.twig', [
-            'rooms' => $roomsRepository->findAll(),
+            'rooms' => $rooms,
+            'form' => $form->createView()
         ]);
     }
 
@@ -69,7 +91,6 @@ class RoomsController extends AbstractController
             $entityManager->persist($room);
             $entityManager->flush();
 
-
             return $this->redirectToRoute('rooms_index');
         }
 
@@ -80,20 +101,58 @@ class RoomsController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="rooms_show", methods={"GET"})
-     * @IsGranted("EDIT_VIEW", subject="room")
+     * @Route("/{id}", name="rooms_show")
+     *
      */
-    public function show(Rooms $room): Response
+    public function show(Rooms $room, Request $request, OrderRepository $orderRepository, BookingHelper $bookingHelper): Response
     {
-        $description = html_entity_decode($room->getDescription());
+
+        $user = $this->getUser();
+        $session = new Session();
+        $order = new Order();
+        $form = $this->createForm(ChooseDateType::class);
+        $input = $form->handleRequest($request);
+        $now = date_create(date('Y-m-d',strtotime("now")));
+        $listBooking = $orderRepository->listBooking($now,$room);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $from_date = Carbon::parse($input['fromDate']->getData())->toDateString();
+            $to_date = Carbon::parse($input['toDate']->getData())->toDateString();
+            $data = $bookingHelper->checkOut($room->getId(), $from_date, $to_date);
+            if (empty($user)){
+                $this->addFlash('success', '');
+                $this->addFlash('error', 'You need to log in to booking!');
+            }
+            elseif (!is_array($data)){
+                $this->addFlash('success', '');
+                $this->addFlash('error', $data);
+            }
+            elseif (is_array($data)){
+                $data = $bookingHelper->checkOut($room->getId(), $from_date, $to_date);
+                $order = [
+                    'room' => $room->getId(),
+                    'days' => $data['days'],
+                    'sumPrice' => $data['sumPrice'],
+                    'fromDate' => $form->get("fromDate")->getData(),
+                    'toDate' => $form->get("toDate")->getData(),
+                ];
+                $session->set('order', $order);
+                return $this->redirectToRoute('order_new');
+            }
+            return $this->redirectToRoute('rooms_show',[
+                'id' => $room->getId()
+            ]);
+        }
         return $this->render('rooms/show.html.twig', [
             'room' => $room,
+            'form' => $form->createView(),
+            'lists' => $listBooking,
         ]);
     }
 
     /**
      * @Route("/{id}/edit", name="rooms_edit", methods={"GET","POST"})
-     * @IsGranted("EDIT_VIEW", subject="room")
+     * @IsGranted("ROLE_ADMIN")
      */
     public function edit(Request $request, Rooms $room , UserRepository $userRepository): Response
     {
@@ -137,6 +196,7 @@ class RoomsController extends AbstractController
 
     /**
      * @Route("/{id}", name="rooms_delete", methods={"DELETE"})
+     * @IsGranted("ROLE_ADMIN")
      */
     public function delete(Request $request, Rooms $room): Response
     {
