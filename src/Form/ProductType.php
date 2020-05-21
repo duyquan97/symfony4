@@ -112,6 +112,7 @@ class ProductType extends AbstractType
                     'No' => '0',
                 ],
             ]);
+
     }
 
     public function configureOptions(OptionsResolver $resolver)

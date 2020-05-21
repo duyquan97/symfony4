@@ -4,7 +4,9 @@ namespace App\Form;
 
 use App\Entity\Rooms;
 
+use App\Form\DataTransformer\TestTransformer;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -19,10 +21,17 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class RoomsType extends AbstractType
 {
+    private $transformer;
+
+    public function __construct(TestTransformer $transformer)
+    {
+        $this->transformer = $transformer;
+    }
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('name', TextType::class,[
+                'required' => false,
                 'attr' =>[
                     'placeholder' => 'Import name ',
                 ],
@@ -31,6 +40,7 @@ class RoomsType extends AbstractType
                         'message' => 'Name not blank!'
                     ]),
                 ]
+
             ])
             ->add('province',ChoiceType::class,[
                 'choices' => [
@@ -117,22 +127,17 @@ class RoomsType extends AbstractType
                     'placeholder' => '%',
                 ]
             ])
-
-            ->add('service',ChoiceType::class,[
-                'multiple' => true,
-                'choices' => [
-                    'Wifi'            => 'Wifi',
-                    'Clean the room'  => 'Clean the room',
-                    'Pool'            => 'Pool',
-                    'TV'              => 'TV',
-                    'Air condition'   => 'Air condition',
-                    'Dryer'           => 'Dryer',
-                    'Washing machine' => 'Washing machine',
-                    'Microwave'       => 'Microwave',
-                    'Fridge'          => 'Fridge',
-                    'Towel'           => 'Towel',
-                ]
-            ])
+            ->add(
+                $builder->create('service',TextType::class)
+                ->addModelTransformer(new CallbackTransformer(
+                    function ($tagsAsArray) {
+                        return implode(', ', $tagsAsArray);
+                    },
+                    function ($tagsAsString) {
+                        return explode(', ', $tagsAsString);
+                    }
+                ))
+            )
             ->add('type',ChoiceType::class,[
                 'choices' => [
                     'Vip' => 'vip',
@@ -173,9 +178,10 @@ class RoomsType extends AbstractType
                     'Off' => 'Off',
                 ]
             ])
-
-        ;
-
+            ->add('user',UserType::class,[
+                    'invalid_message' => 'This value is not valid',
+                ]
+            );
     }
 
     public function configureOptions(OptionsResolver $resolver)

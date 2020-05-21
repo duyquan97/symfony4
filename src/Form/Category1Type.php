@@ -6,6 +6,7 @@ use App\Entity\Category;
 use Doctrine\DBAL\Types\TextType;
 use Doctrine\ORM\Cache\Persister\Collection\ReadOnlyCachedCollectionPersister;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -17,7 +18,7 @@ class Category1Type extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name',null,[
+            ->add('name',TextType::class,[
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Choose a name category!'
@@ -36,6 +37,15 @@ class Category1Type extends AbstractType
                 )
             ])
             ->add('description',TextareaType::class);
+            $builder->get('name')
+                ->addModelTransformer(new CallbackTransformer(
+                    function ($nameAsArray) {
+                        return implode(', ', $nameAsArray);
+                    },
+                    function ($nameAsString) {
+                        return explode(', ', $nameAsString);
+                    }
+                ));
     }
 
     public function configureOptions(OptionsResolver $resolver)

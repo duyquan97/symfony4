@@ -85,8 +85,6 @@ class RoomsController extends AbstractController
             $code = strtoupper(uniqid());
             $room->setCode($code);
             $room->setSlug($slugify->slugify($form['name']->getData()));
-            $room->getUser($userRepository->find($user));
-
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($room);
             $entityManager->flush();
@@ -181,8 +179,6 @@ class RoomsController extends AbstractController
             $slugify = new Slugify();
             $slug = $slugify->slugify($form['name']->getData());
             $room->setSlug($slug);
-            $room->setUser($userRepository->find($user->getId()));
-
             $this->getDoctrine()->getManager()->flush();
 
             return $this->redirectToRoute('rooms_index');

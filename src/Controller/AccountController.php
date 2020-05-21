@@ -1,8 +1,11 @@
 <?php
 namespace App\Controller;
 
+use App\Form\ArticleFormType;
+use App\Form\UserSelectTextType;
 use App\Updates\SiteUpdateManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
@@ -51,6 +54,18 @@ class AccountController extends AbstractController
         if ($data) {
             dd($data);
         }
+    }
+
+    /**
+     * @Route("/transform")
+     */
+    public function transForm(Request $request) {
+        $form = $this->createForm(UserSelectTextType::class);
+        $form->handleRequest($request);
+
+        return $this->render('account/index.html.twig',[
+           'form' => $form->createView()
+        ]);
     }
 
 }
