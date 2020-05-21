@@ -6,6 +6,7 @@ use App\Entity\Service;
 use App\Form\ServiceType;
 use App\Repository\ServiceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -18,10 +19,18 @@ class ServiceController extends AbstractController
     /**
      * @Route("/", name="service_index", methods={"GET"})
      */
-    public function index(ServiceRepository $serviceRepository): Response
+    public function index(ServiceRepository $serviceRepository, AdapterInterface $cache): Response
     {
+        $data = $serviceRepository->findAll();
+
+        $item = $cache->getItem('service_'.count($data));
+        if (!$item->isHit()) {
+            $item->set($data);
+            $cache->save($item);
+        }
+        $services = $item->get();
         return $this->render('service/index.html.twig', [
-            'services' => $serviceRepository->findAll(),
+            'services' => $data,
         ]);
     }
 

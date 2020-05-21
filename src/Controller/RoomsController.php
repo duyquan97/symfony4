@@ -22,6 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
 use Cocur\Slugify\Slugify;
+use Symfony\Component\Serializer\SerializerInterface;
 use function GuzzleHttp\Promise\all;
 
 /**
@@ -43,7 +44,6 @@ class RoomsController extends AbstractController
         $toDate   = $form->get('toDate')->getData();
         $type     = $form->get('type')->getData();
         $session = new Session();
-
         !empty($fromDate) ? $session->set('from_date',$fromDate) : '';
         !empty($toDate) ? $session->set('to_date',$toDate) : '';
         $rooms = $paginator->paginate($roomsRepository->search( $keyWord,$fromDate,$toDate,$type), $request->query->getInt('page', 1), 6);

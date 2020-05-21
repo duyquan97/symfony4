@@ -1,28 +1,56 @@
 <?php
 namespace App\Controller;
-use Psr\Log\LoggerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Component\Routing\Annotation\Route;
 
-class AccountController extends BaseController
+use App\Updates\SiteUpdateManager;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Mime\Address;
+use App\Service\MessageGenerator;
+
+class AccountController extends AbstractController
 {
-    /**
-     * @Route("/account", name="app_account")
-     */
-    public function index(LoggerInterface $logger)
+    private $adminEmail;
+    public function __construct($adminEmail)
     {
-        $logger->debug('Checking account page for '.$this->getUser()->getEmail());
-        return $this->render('account/index.html.twig', [
-        ]);
+        $this->adminEmail = $adminEmail;
+    }
+
+
+    /**
+     * @Route("/email")
+     */
+    public function sendEmail(MailerInterface $mailer) {
+
+        $email = (new Email())
+            ->from('duyquan130497@gmail.com')
+            ->to('duyquan627@gmail.com')
+            ->subject('Time for Symfony Mailer!')
+            ->text('Sending emails is fun again!')
+            ->html('<p>See Twig integration for better HTML integration!</p>');
+
+        $mailer->send($email);
+        dd(123);
     }
     /**
-     * @Route("/api/account", name="api_account")
+     * @Route("/servicetest")
      */
-    public function accountApi()
-    {
-        $user = $this->getUser();
-        return $this->json($user, 200, [], [
-            'groups' => ['main'],
-        ]);
+    public function new(MessageGenerator $messageGenerator) {
+        $message = $messageGenerator->getHappyMessage();
+        dd($message);
+        $this->addFlash('success', $message);
     }
+
+    /**
+     * @Route("/servicetest2")
+     */
+    public function test(SiteUpdateManager $siteUpdateManager) {
+
+        $data = $siteUpdateManager->notifyOfSiteUpdate();
+        if ($data) {
+            dd($data);
+        }
+    }
+
 }

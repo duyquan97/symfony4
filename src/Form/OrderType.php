@@ -20,8 +20,11 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Validator\Constraints\Date;
+use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Type;
 
 class OrderType extends AbstractType
 {
@@ -50,9 +53,6 @@ class OrderType extends AbstractType
                 ]
             ])
             ->add('phone',TextType::class,[
-                'attr' => [
-
-                ],
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Phone not blank!'
@@ -92,13 +92,21 @@ class OrderType extends AbstractType
                     new NotBlank([
                         'message' => 'Email not blank!'
                     ]),
+
                 ]
             ])
             ->add('price')
             ->add('currency',TextType::class,[
 
             ])
-            ->add('days')
+            ->add('days',null,[
+                'constraints' => [
+                    new Type([
+                        'type' => 'integer',
+                        'message' => 'The value {{ value }} is not a valid {{ type }}'
+                    ])
+                ]
+            ])
 
             ->addEventListener(
                 FormEvents::PRE_SET_DATA,
@@ -163,6 +171,9 @@ class OrderType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Order::class,
+            'csrf_protection' => true,
+            'csrf_field_name' => '_token',
+            'csrf_token_id'   => 'task_item',
         ]);
     }
 }
