@@ -34,15 +34,20 @@ services:
 
     App\Updates\SiteUpdateManager:
         arguments:
-            $adminEmail: 'quandd@smartosc.com'
+            $adminEmail: 'duyquan@smartosc.com'
+            $mailer: '@mailer.mailer'
 
     App\Service\MessageGenerator:
         tags: ['service.message_generator']
         arguments:
+            $mailer_password: '@@securepassword'
             $logger: '@monolog.logger.request'
+            $test: '@service.test'
 
-    App\Twig\AppExtension:
-        tags: ['twig.extension']
+
+    service.test:
+        class: App\Service\TestService
+        public: true
 
 
 

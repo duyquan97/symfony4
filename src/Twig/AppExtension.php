@@ -4,27 +4,25 @@ namespace App\Twig;
 
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
-use Twig\TwigFunction;
-use Twig\Extra\Markdown\MarkdownExtension;
 
 class AppExtension extends AbstractExtension
 {
-    public function getFilters(): array
+
+    public function getFilters()
     {
         return [
-            new TwigFilter('filter_name', [$this, 'doSomething'], ['is_safe' => ['html']]),
+            new TwigFilter('price', [$this, 'formatPrice']),
+            new TwigFilter('notEmpty', [$this, 'notEmpty']),
         ];
     }
 
-    public function getFunctions(): array
+    public function formatPrice($number, $decimals = 0)
     {
-        return [
-            new TwigFunction('function_name', [$this, 'doSomething']),
-        ];
+        $price = number_format($number,$decimals,'.',',');
+        return $price;
     }
-
-    public function doSomething($value)
-    {
-        return strtoupper($value);
+    public function notEmpty($val){
+       $bool = !empty($val) ? true : false;
+        return $bool;
     }
 }

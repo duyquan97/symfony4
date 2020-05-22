@@ -49,7 +49,6 @@ class AccountController extends AbstractController
      * @Route("/servicetest2")
      */
     public function test(SiteUpdateManager $siteUpdateManager) {
-
         $data = $siteUpdateManager->notifyOfSiteUpdate();
         if ($data) {
             dd($data);
@@ -60,6 +59,8 @@ class AccountController extends AbstractController
      * @Route("/transform")
      */
     public function transForm(Request $request) {
+        dd(__DIR__);
+
         $form = $this->createForm(UserSelectTextType::class);
         $form->handleRequest($request);
 

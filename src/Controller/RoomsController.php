@@ -14,16 +14,17 @@ use App\Repository\UserRepository;
 use App\Service\BookingHelper;
 use Carbon\Carbon;
 use Knp\Component\Pager\PaginatorInterface;
+use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Debug\Debug;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
 use Cocur\Slugify\Slugify;
-use Symfony\Component\Serializer\SerializerInterface;
-use function GuzzleHttp\Promise\all;
+
 
 /**
  * @Route("/rooms")
@@ -35,8 +36,9 @@ class RoomsController extends AbstractController
      * @Route("/", name="rooms_index")
      *
      */
-    public function index(RoomsRepository $roomsRepository, Request $request, PaginatorInterface $paginator): Response
+    public function index(LoggerInterface $logger, RoomsRepository $roomsRepository, Request $request, PaginatorInterface $paginator): Response
     {
+        $logger->info('Look! I just used a service');
         $form = $this->createForm(SearchType::class);
         $form->handleRequest($request);
         $keyWord  = $form->get('keyWord')->getData();
@@ -59,7 +61,6 @@ class RoomsController extends AbstractController
     public function new(Request $request, UserRepository $userRepository): Response
     {
         $user = $this->getUser();
-
         $room = new Rooms();
         $form = $this->createForm(RoomsType::class, $room);
         $form->handleRequest($request);

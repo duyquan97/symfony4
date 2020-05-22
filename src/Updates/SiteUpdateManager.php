@@ -11,7 +11,7 @@ class SiteUpdateManager
     private $mailer;
     private $adminEmail;
 
-    public function __construct(MessageGenerator $messageGenerator, MailerInterface $mailer, $adminEmail)
+    public function __construct(MessageGenerator $messageGenerator, $mailer, $adminEmail)
     {
         $this->messageGenerator = $messageGenerator;
         $this->mailer = $mailer;
@@ -20,6 +20,7 @@ class SiteUpdateManager
 
     public function notifyOfSiteUpdate()
     {
+        dd($this->adminEmail);
         $happyMessage = $this->messageGenerator->getHappyMessage();
         $email = (new Email())
             ->from($this->adminEmail)

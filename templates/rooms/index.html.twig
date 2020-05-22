@@ -62,30 +62,32 @@
             </tr>
         </thead>
         <tbody>
-        {% for room in rooms %}
-            <tr>
-                <td>{{ room.id }}</td>
-                <td>{{ room.code }}</td>
-                <td>{{ room.name }}</td>
-                <td>{{ room.province }}</td>
-                <td>{{ room.price|number_format }}VND</td>
-                <td>{{ room.discount }}%</td>
-                <td>{{ room.type }}</td>
-                <td>{{ room.status }}</td>
-                <td>{{ room.featured }}</td>
-                <td style="display: flex">
-                    <a class="btn btn-success" href="{{ path('rooms_show', {'id': room.id}) }}"><i class="far fa-eye"></i></a>
-                    {% if app.user and is_granted("ROLE_ADMIN") %}
-                        |<a class="btn btn-primary" href="{{ path('rooms_edit', {'id': room.id}) }}"><i class="fas fa-edit"></i></a>|
-                        {{ include('rooms/_delete_form.html.twig') }}
-                    {%  endif %}
-                </td>
-            </tr>
+        {% if rooms|notEmpty() %}
+            {% for room in rooms %}
+                <tr>
+                    <td>{{ room.id | notEmpty() ? room.id : ''}}</td>
+                    <td>{{ room.code }}</td>
+                    <td>{{ room.name }}</td>
+                    <td>{{ room.province }}</td>
+                    <td>{{ room.price|price(0)  }}VND</td>
+                    <td>{{ room.discount }}%</td>
+                    <td>{{ room.type }}</td>
+                    <td>{{ room.status }}</td>
+                    <td>{{ room.featured }}</td>
+                    <td style="display: flex">
+                        <a class="btn btn-success" href="{{ path('rooms_show', {'id': room.id}) }}"><i class="far fa-eye"></i></a>
+                        {% if app.user and is_granted("ROLE_ADMIN") %}
+                            |<a class="btn btn-primary" href="{{ path('rooms_edit', {'id': room.id}) }}"><i class="fas fa-edit"></i></a>|
+                            {{ include('rooms/_delete_form.html.twig') }}
+                        {%  endif %}
+                    </td>
+                </tr>
+            {% endfor %}
         {% else %}
             <tr>
                 <td colspan="23">no records found</td>
             </tr>
-        {% endfor %}
+        {% endif %}
         </tbody>
     </table>
     {% if app.user and is_granted("ROLE_ADMIN") %}
