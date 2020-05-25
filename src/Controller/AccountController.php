@@ -15,17 +15,23 @@ use App\Service\MessageGenerator;
 class AccountController extends AbstractController
 {
     private $adminEmail;
-    public function __construct($adminEmail)
+    private $mailer;
+    private $messageGenerator;
+
+
+    public function __construct($adminEmail, MailerInterface $mailer,MessageGenerator $messageGenerator)
     {
         $this->adminEmail = $adminEmail;
+        $this->mailer = $mailer;
+        $this->messageGenerator = $messageGenerator;
     }
 
 
     /**
      * @Route("/email")
      */
-    public function sendEmail(MailerInterface $mailer) {
-
+    public function sendEmail() {
+        $email =
         $email = (new Email())
             ->from('duyquan130497@gmail.com')
             ->to('duyquan627@gmail.com')
@@ -33,14 +39,14 @@ class AccountController extends AbstractController
             ->text('Sending emails is fun again!')
             ->html('<p>See Twig integration for better HTML integration!</p>');
 
-        $mailer->send($email);
+        $this->mailer->send($email);
         dd(123);
     }
     /**
      * @Route("/servicetest")
      */
-    public function new(MessageGenerator $messageGenerator) {
-        $message = $messageGenerator->getHappyMessage();
+    public function new() {
+        $message = $this->messageGenerator->getHappyMessage();
         dd($message);
         $this->addFlash('success', $message);
     }
@@ -50,6 +56,7 @@ class AccountController extends AbstractController
      */
     public function test(SiteUpdateManager $siteUpdateManager) {
         $data = $siteUpdateManager->notifyOfSiteUpdate();
+        dd($data);
         if ($data) {
             dd($data);
         }

@@ -5,6 +5,7 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     brochures_directory: '%kernel.project_dir%/public/uploads/image'
+    email.admin: 'duyquan@smartosc.com'
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -34,7 +35,7 @@ services:
 
     App\Updates\SiteUpdateManager:
         arguments:
-            $adminEmail: 'duyquan@smartosc.com'
+            $adminEmail: '%email.admin%'
             $mailer: '@mailer.mailer'
 
     App\Service\MessageGenerator:
@@ -44,12 +45,16 @@ services:
             $logger: '@monolog.logger.request'
             $test: '@service.test'
 
-
     service.test:
         class: App\Service\TestService
         public: true
 
+    service.c:
+        class: App\Service\C
+        public: true
 
+    App\Service\C:
+        autowire: true
 
 
 knp_paginator:

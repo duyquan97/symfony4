@@ -2,6 +2,7 @@
 namespace App\Updates;
 
 use App\Service\MessageGenerator;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 
