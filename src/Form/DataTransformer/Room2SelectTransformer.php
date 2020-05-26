@@ -1,6 +1,7 @@
 <?php
 namespace App\Form\DataTransformer;
 use App\Entity\User;
+use App\Repository\Room2Repository;
 use App\Repository\RoomsRepository;
 use App\Repository\TagRepository;
 use App\Repository\UserRepository;
@@ -10,22 +11,15 @@ use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\HttpFoundation\Session\Session;
 
-class RoomSelectTransformer implements DataTransformerInterface
+class Room2SelectTransformer implements DataTransformerInterface
 {
-    private $roomsRepository;
-    public function __construct(RoomsRepository $roomsRepository)
+    private $room2Repository;
+    public function __construct(Room2Repository $room2Repository)
     {
-        $this->roomsRepository = $roomsRepository;
+        $this->room2Repository = $room2Repository;
     }
     public function transform($room)
     {
-        $session = new Session();
-        if (null != $session->get('order')){
-            $id = $session->get('order')['room'];
-                if (!empty($id)) {
-                    return $id;
-                }
-        }
         if (null === $room) {
             return '';
         }
@@ -36,7 +30,7 @@ class RoomSelectTransformer implements DataTransformerInterface
         if (!$roomId) {
             return;
         }
-        $user = $this->roomsRepository->find($roomId);
+        $user = $this->room2Repository->find($roomId);
         if (null === $user) {
             $privateErrorMessage = sprintf('An room with number "%s" does not exist!', $roomId);
             $publicErrorMessage = 'The given "{{ value }}" value is not a valid room number.';

@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Room2{% endblock %}
+
+{% block body %}
+    <h1>Room2</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ room2.id }}</td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td>{{ room2.name }}</td>
+            </tr>
+            <tr>
+                <th>Slug</th>
+                <td>{{ room2.slug }}</td>
+            </tr>
+            <tr>
+                <th>Province</th>
+                <td>{{ room2.province }}</td>
+            </tr>
+            <tr>
+                <th>District</th>
+                <td>{{ room2.district }}</td>
+            </tr>
+            <tr>
+                <th>Street</th>
+                <td>{{ room2.street }}</td>
+            </tr>
+            <tr>
+                <th>ShortDescription</th>
+                <td>{{ room2.shortDescription }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ room2.description }}</td>
+            </tr>
+            <tr>
+                <th>Image</th>
+                <td>{{ room2.image }}</td>
+            </tr>
+            <tr>
+                <th>Type</th>
+                <td>{{ room2.type }}</td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <td>{{ room2.status }}</td>
+            </tr>
+            <tr>
+                <th>Featured</th>
+                <td>{{ room2.featured }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('room2_index') }}">back to list</a>
+
+    <a href="{{ path('room2_edit', {'id': room2.id}) }}">edit</a>
+
+    {{ include('room2/_delete_form.html.twig') }}
+{% endblock %}

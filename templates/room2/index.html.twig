@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Room2 index{% endblock %}
+
+{% block body %}
+    <h1>Room2 index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Slug</th>
+                <th>Province</th>
+                <th>District</th>
+                <th>Street</th>
+                <th>ShortDescription</th>
+                <th>Description</th>
+                <th>Image</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Featured</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for room2 in room2s %}
+            <tr>
+                <td>{{ room2.id }}</td>
+                <td>{{ room2.name }}</td>
+                <td>{{ room2.slug }}</td>
+                <td>{{ room2.province }}</td>
+                <td>{{ room2.district }}</td>
+                <td>{{ room2.street }}</td>
+                <td>{{ room2.shortDescription }}</td>
+                <td>{{ room2.description }}</td>
+                <td>{{ room2.image }}</td>
+                <td>{{ room2.type }}</td>
+                <td>{{ room2.status }}</td>
+                <td>{{ room2.featured }}</td>
+                <td>
+                    <a href="{{ path('room2_show', {'id': room2.id}) }}">show</a>
+                    <a href="{{ path('room2_edit', {'id': room2.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="13">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('room2_new') }}">Create new</a>
+{% endblock %}
