@@ -9,5 +9,8 @@ class A
     {
         return 'Day la A';
     }
+    public function test(TestService $testService) {
+        return $testService->getHappyMessage();
+    }
 
 }
