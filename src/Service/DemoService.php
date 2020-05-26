@@ -4,8 +4,7 @@ namespace App\Service;
 
 class DemoService
 {
-    public function helloWorld()
-    {
-        return "Hello World!\n";
+    public function index(){
+        return 'alo alo gay de';
     }
 }

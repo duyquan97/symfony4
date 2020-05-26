@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Mime\Address;
 use App\Service\A;
 use App\Service\A2;
-use App\Service\C;
+use App\Service\CService;
 use App\Service\TestService;
 
     class BController extends AbstractController
@@ -34,13 +34,17 @@ use App\Service\TestService;
 //            dd($this->c->test());
 //        }
 
-        /**
+        private $serviceC;
+        public function __construct(CService $serviceC)
+        {
+            $this->serviceC = $serviceC;
+        }
+
+    /**
          * @Route("/autowiring")
          */
-        public function autowiring(C $c){
-            $a =1;
-            $b =2;
-            dd($c->test($a,$b));
+        public function autowiring(){
+            dd($this->serviceC->test());
 
 
 

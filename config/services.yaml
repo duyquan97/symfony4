@@ -6,6 +6,7 @@
 parameters:
     brochures_directory: '%kernel.project_dir%/public/uploads/image'
     email.admin: 'duyquan@smartosc.com'
+    message_test: 'Xin chao'
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -45,16 +46,24 @@ services:
             $logger: '@monolog.logger.request'
             $test: '@service.test'
 
+    c_service:
+        class: App\Service\CService
+        autowire: true
+        arguments:
+            - '%message_test%'
+            - '@demo_service'
+
+
     service.test:
         class: App\Service\TestService
         public: true
 
-    service.c:
-        class: App\Service\C
-        public: true
+    demo_service:
+        class: App\Service\DemoService
 
-    App\Service\C:
-        autowire: true
+
+
+
 
 
 knp_paginator:
